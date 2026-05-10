@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#E8927C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="INK社区">
+<link rel="manifest" href="/manifest.json">
+<link rel="stylesheet" href="/css/style.css">
+<title>INK — 心情社区</title>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ====== SIDEBAR ====== -->
+  <aside class="sidebar">
+    <a class="logo" href="#home">
+      <div class="logo-icon">⌐</div>
+      <span class="logo-text">INK</span>
+    </a>
+    <nav class="nav" id="sideNav">
+      <a class="nav-item active" href="#home" data-route="home"><span>🏠</span> 首页</a>
+      <a class="nav-item" href="#explore" data-route="explore"><span>🔍</span> 探索</a>
+      <a class="nav-item" href="#write" data-route="write"><span>✏️</span> 写日记</a>
+      <a class="nav-item" href="#calendar" data-route="calendar"><span>🗓️</span> 心情日历</a>
+      <a class="nav-item" href="#profile" data-route="profile"><span>👤</span> 我的</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-card-side" id="sidebarUserCard" onclick="if(currentUser)router.navigate('profile');else authUI.show()">
+        <div class="user-avatar-side" id="sidebarAvatar">?</div>
+        <div class="user-info-side">
+          <div class="user-name-side" id="sidebarName">未登录</div>
+          <div class="user-handle-side" id="sidebarHandle">点击登录</div>
+        </div>
+      </div>
+      <div style="padding:4px 8px 0;"><span class="sidebar-logout" id="sidebarLogout" style="display:none;" onclick="Auth.logout()">退出登录</span></div>
+    </div>
+  </aside>
+
+  <!-- ====== MAIN ====== -->
+  <main class="main">
+    <div class="feed">
+
+      <!-- HOME VIEW -->
+      <div class="view active" id="view-home">
+        <div class="topbar"><span class="topbar-title">为你推荐</span><button class="btn-outline" onclick="if(currentUser)router.navigate('write');else authUI.show()">✏️ 写日记</button></div>
+        <div class="guest-banner" id="guestBanner" style="display:none;"><span>登录以记录心情、参与互动</span><button onclick="authUI.show()">登录 / 注册</button></div>
+        <div class="compose" id="homeCompose" style="display:none;">
+          <div class="compose-avatar" id="composeAvatar">?</div>
+          <div class="compose-body">
+            <textarea class="compose-input" id="quickContent" placeholder="今天心情如何...？" rows="1"></textarea>
+            <div class="compose-actions">
+              <div class="compose-tools"><div class="compose-moods" id="quickMoods"></div></div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span class="privacy-toggle" id="privacyToggle" onclick="app.togglePrivacy()">🌐 公开</span>
+                <button class="btn-post" onclick="app.quickPublish()">发布</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="posts" id="diaryPosts"></div>
+        <div id="emptyHome" style="display:none;flex:1;flex-direction:column;align-items:center;justify-content:center;padding:60px 24px;text-align:center;"><div style="font-size:56px;">🌍</div><div style="font-size:18px;font-weight:700;margin-bottom:6px;">还没有公开日记</div><div style="color:var(--text-secondary);font-size:14px;">成为第一个分享心情的人吧</div></div>
+      </div>
+
+      <!-- EXPLORE VIEW -->
+      <div class="view" id="view-explore">
+        <div class="topbar"><span class="topbar-title">🔍 探索</span></div>
+        <div style="padding:14px 20px;border-bottom:1px solid var(--border);"><div style="font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:10px;">按心情筛选</div><div class="tag-cloud" id="exploreTags"></div></div>
+        <div class="posts" id="explorePosts"></div>
+        <div class="empty-state" id="exploreEmpty" style="display:none;"><div style="font-size:48px;">🔍</div><div style="color:var(--text-secondary);font-size:14px;">没有找到匹配的心情</div></div>
+      </div>
+
+      <!-- WRITE VIEW -->
+      <div class="view" id="view-write">
+        <div class="topbar"><span class="topbar-title">✏️ 新日记</span><button class="btn-outline" onclick="router.navigate('home')">取消</button></div>
+        <div style="padding:16px 20px;">
+          <div class="write-section"><label class="write-label">心情</label><div class="mood-picker" id="moodPicker"></div></div>
+          <div class="write-section"><label class="write-label">标题</label><input class="write-input" type="text" id="diaryTitle" placeholder="给你的日记起个标题..." maxlength="60"></div>
+          <div class="write-section"><label class="write-label">内容</label><textarea class="write-textarea" id="diaryContent" placeholder="今天发生了什么...？"></textarea></div>
+          <div class="write-section"><label class="write-label">图片</label><div class="image-upload-area" id="imageArea"><div class="image-upload-btn" onclick="document.getElementById('imageInput').click()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>添加图片</div></div><input type="file" id="imageInput" accept="image/*" multiple style="display:none;"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;">
+            <span style="font-size:12px;color:var(--text-muted);" id="charCount">0 字</span>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <span class="privacy-toggle" id="writePrivacyToggle" onclick="app.toggleWritePrivacy()">🌐 公开</span>
+              <button class="btn-post" onclick="app.saveEntry()">保存日记</button>
+            </div>
+          </div>
+        </div>
+        <input type="hidden" id="editId" value="">
+      </div>
+
+      <!-- CALENDAR VIEW -->
+      <div class="view" id="view-calendar">
+        <div class="topbar"><span class="topbar-title">🗓️ 心情日历</span><button class="btn-outline" onclick="calView.goToday()">今天</button></div>
+        <div style="padding:16px 20px;max-width:500px;margin:0 auto;width:100%;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+            <button style="width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:var(--bg-card);cursor:pointer;" onclick="calView.prevMonth()">◂</button>
+            <span style="font-size:18px;font-weight:700;" id="calMonthTitle"></span>
+            <button style="width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:var(--bg-card);cursor:pointer;" onclick="calView.nextMonth()">▸</button>
+          </div>
+          <div class="cal-grid" id="calGrid"></div>
+          <div style="margin-top:16px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;" id="calPreview"><div style="color:var(--text-muted);font-size:13px;text-align:center;">点击某一天查看公开心情</div></div>
+        </div>
+      </div>
+
+      <!-- PROFILE VIEW -->
+      <div class="view" id="view-profile">
+        <div class="topbar"><span class="topbar-title">👤 个人主页</span><span><button class="btn-outline" id="btnEditProfile" style="display:none;" onclick="app.openProfileEdit()">编辑资料</button><button class="btn-follow" id="btnFollowProfile" style="display:none;" onclick="app.toggleFollow(profileView.profileUserId)">关注</button></span></div>
+        <div style="padding:16px 20px;">
+          <div class="profile-card">
+            <div class="profile-avatar" id="profileAvatar">?</div>
+            <div class="profile-name" id="profileName">--</div>
+            <div class="profile-handle" id="profileHandle">@--</div>
+            <div class="profile-bio" id="profileBio"></div>
+            <div class="profile-stats">
+              <div class="profile-stat-item"><div class="profile-stat-num" id="profileEntryCount">0</div><div class="profile-stat-label">日记</div></div>
+              <div class="profile-stat-item"><div class="profile-stat-num" id="profileFollowerCount">0</div><div class="profile-stat-label">关注者</div></div>
+              <div class="profile-stat-item"><div class="profile-stat-num" id="profileFollowingCount">0</div><div class="profile-stat-label">关注中</div></div>
+            </div>
+          </div>
+          <div class="posts" id="profilePosts"></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ====== RIGHT PANEL ====== -->
+  <aside class="explore" id="explorePanel">
+    <div class="explore-card" id="weatherCard">
+      <div class="explore-card-header">天气</div>
+      <div class="weather-card-body" id="weatherBody"><div class="weather-icon-wrap" id="weatherIcon"></div><div class="weather-info"><div class="weather-city" id="weatherCity">--</div><div class="weather-temp" id="weatherTemp">--°C</div><div class="weather-desc" id="weatherDesc">加载中...</div><div class="weather-extra" id="weatherExtra"></div></div></div>
+      <div class="weather-error" id="weatherError" style="display:none;">天气信息暂不可用</div>
+    </div>
+
+    <div class="explore-card">
+      <div class="explore-card-header">今日热门心情</div>
+      <div class="explore-card-body"><div class="mood-stat-row"><div class="mood-stat-emoji" id="hotMoodEmoji">😊</div><div style="font-size:14px;font-weight:700;" id="hotMoodLabel">--</div><div style="font-size:12px;color:var(--text-muted);margin-left:auto;" id="hotMoodCount"></div></div></div>
+    </div>
+
+    <div class="explore-card">
+      <div class="explore-card-header">推荐关注</div>
+      <div class="explore-card-body" id="whoToFollow"><div style="color:var(--text-muted);font-size:13px;text-align:center;padding:8px;">加载中...</div></div>
+    </div>
+
+    <div class="explore-card">
+      <div class="explore-card-header">心情标签</div>
+      <div class="explore-card-body"><div class="tag-cloud" id="moodTagCloud"></div></div>
+    </div>
+
+    <div style="padding:0 4px 20px;">
+      <div style="display:flex;flex-wrap:wrap;gap:4px 12px;margin-bottom:8px;"><a href="#" style="font-size:12px;color:var(--text-muted);text-decoration:none;">服务条款</a><a href="#" style="font-size:12px;color:var(--text-muted);text-decoration:none;">隐私政策</a><a href="#" style="font-size:12px;color:var(--text-muted);text-decoration:none;">关于</a></div>
+      <div style="font-size:12px;color:var(--text-muted);">© 2026 INK — 心情社区</div>
+    </div>
+  </aside>
+
+</div><!-- /app -->
+
+<!-- ====== LOGIN MODAL ====== -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-card">
+    <div class="login-logo">⌐</div>
+    <div class="login-title">INK 心情社区</div>
+    <div class="login-subtitle" id="loginSubtitle">登录你的账号</div>
+    <div class="login-tabs">
+      <button class="login-tab active" data-tab="login" onclick="authUI.switchTab('login')">登录</button>
+      <button class="login-tab" data-tab="register" onclick="authUI.switchTab('register')">注册</button>
+    </div>
+    <input type="text" class="login-input" id="loginUsername" placeholder="用户名" maxlength="20" autocomplete="off">
+    <input type="password" class="login-input" id="loginPassword" placeholder="密码（至少4位）" maxlength="64" autocomplete="off" onkeydown="if(event.key==='Enter')authUI.submit()">
+    <div class="login-error" id="loginError"></div>
+    <button class="login-btn" id="loginBtn" onclick="authUI.submit()">登录</button>
+  </div>
+</div>
+
+<!-- Profile Edit Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal"><div class="modal-title">编辑个人资料</div><input class="modal-input" type="text" id="editName" placeholder="你的名字" maxlength="20"><textarea class="modal-input" id="editBio" placeholder="写一段个人简介..." style="min-height:80px;resize:vertical;"></textarea><div class="modal-actions"><button class="btn-outline" onclick="app.closeProfileEdit()">取消</button><button class="btn-post" onclick="app.saveProfile()">保存</button></div></div>
+</div>
+
+<!-- Toast & Lightbox -->
+<div class="toast" id="toast"></div>
+<div class="lightbox" id="lightbox"><img id="lightboxImg" src="" alt=""></div>
+
+<!-- Mobile Nav -->
+<nav class="mobile-nav">
+  <div class="mobile-nav-row">
+    <button class="mobile-nav-item active" data-route="home"><span style="font-size:18px;">🏠</span><span style="font-size:10px;">首页</span></button>
+    <button class="mobile-nav-item" data-route="explore"><span style="font-size:18px;">🔍</span><span style="font-size:10px;">探索</span></button>
+    <button class="mobile-nav-item" data-route="write"><span style="font-size:18px;">✏️</span><span style="font-size:10px;">写日记</span></button>
+    <button class="mobile-nav-item" data-route="calendar"><span style="font-size:18px;">🗓️</span><span style="font-size:10px;">日历</span></button>
+    <button class="mobile-nav-item" data-route="profile"><span style="font-size:18px;">👤</span><span style="font-size:10px;">我的</span></button>
+  </div>
+</nav>
+
+<script src="/js/api.js"></script>
+<script src="/js/weather.js"></script>
+<script src="/js/components.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/views.js"></script>
+<script src="/js/app.js"></script>
+</body>
+</html>
