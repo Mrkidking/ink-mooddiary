@@ -21,6 +21,7 @@ const router = {
     // Auth-gated routes
     if (route === 'write' && !currentUser) { authUI.show(); router.navigate('home'); return; }
 
+    if (route === 'login') { loginPage.handleCallback(); }
     if (route === 'home') { await homeView.render(); updateWeather(); updateRightPanel(); }
     if (route === 'explore') exploreView.render();
     if (route === 'write') writeView.render();
@@ -51,10 +52,17 @@ function updateUIState() {
 
   if (loggedIn) {
     const initial = (currentUser.display_name || currentUser.username || '?').charAt(0).toUpperCase();
-    avatar.textContent = initial; avatar.style.background = 'var(--gradient-story)';
+    const avatarUrl = currentUser.avatar_url || '';
+    if (avatarUrl) {
+      avatar.innerHTML = `<img src="${avatarUrl}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+      if (composeAvatar) composeAvatar.innerHTML = `<img src="${avatarUrl}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+    } else {
+      avatar.textContent = initial; avatar.style.background = 'var(--gradient-story)';
+      if (composeAvatar) composeAvatar.textContent = initial;
+    }
+    avatar.style.background = avatarUrl ? 'none' : 'var(--gradient-story)';
     name.textContent = currentUser.display_name || currentUser.username;
     handle.textContent = '@' + (currentUser.username || '...');
-    if (composeAvatar) composeAvatar.textContent = initial;
   } else {
     avatar.textContent = '?'; avatar.style.background = 'var(--bg-elevated)';
     name.textContent = '未登录'; handle.textContent = '点击登录';
@@ -234,10 +242,20 @@ const app = {
   },
 
   // Profile edit
+  async uploadAvatar(input) {
+    if (!input.files || !input.files[0]) return;
+    const data = await Auth.uploadAvatar(input.files[0]);
+    if (data.error) { toast(data.error); return; }
+    document.getElementById('avatarPreview').src = data.avatar_url + '?t=' + Date.now();
+    updateUIState();
+    toast('头像已更新');
+  },
+
   openProfileEdit() {
     document.getElementById('editName').value = currentUser.display_name || '';
     document.getElementById('editHandle').value = '';
     document.getElementById('editBio').value = currentUser.bio || '';
+    document.getElementById('avatarPreview').src = currentUser.avatar_url || '';
     document.getElementById('modalOverlay').classList.add('open');
   },
   closeProfileEdit() { document.getElementById('modalOverlay').classList.remove('open'); },

@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(taskkill //F //IM python.exe)",
+      "Bash(cmd.exe //c \"start https://www.google.com\")",
+      "Bash(start \"\" \"c:\\\\Users\\\\13022\\\\Desktop\\\\项目\\\\index.html\")",
+      "WebFetch(domain:mrkidking.github.io)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"https://mrkidking.github.io/ink-mooddiary/\")",
+      "Bash(start \"\" \"https://mrkidking.github.io/ink-mooddiary/\")",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(taskkill /F /IM node.exe)",
+      "Bash(node index.js)",
+      "Bash(curl -s -X POST http://localhost:3000/api/auth/register -H \"Content-Type: application/json\" -d \"{\\\\\"username\\\\\":\\\\\"alice\\\\\",\\\\\"password\\\\\":\\\\\"123456\\\\\",\\\\\"display_name\\\\\":\\\\\"Alice\\\\\"}\")",
+      "Bash(git commit *)",
+      "Bash(git config *)",
+      "Bash(gh auth *)",
+      "Bash(git remote *)",
+      "Bash(GIT_SSH_COMMAND=\"ssh -o StrictHostKeyChecking=no -o ConnectTimeout=15\" git push)",
+      "Bash(PORT=3001 node index.js)",
+      "Bash(curl -s -X POST http://localhost:3001/api/auth/login -H \"Content-Type: application/json\" -d \"{\\\\\"username\\\\\":\\\\\"alice\\\\\",\\\\\"password\\\\\":\\\\\"123456\\\\\"}\")"
+    ]
+  }
+}

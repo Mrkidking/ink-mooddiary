@@ -82,6 +82,8 @@ async function init() {
       display_name TEXT DEFAULT '',
       bio TEXT DEFAULT '',
       avatar_url TEXT DEFAULT '',
+      security_question TEXT DEFAULT '',
+      security_answer TEXT DEFAULT '',
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
     CREATE TABLE IF NOT EXISTS entries (
@@ -124,6 +126,10 @@ async function init() {
       UNIQUE(follower_id, following_id)
     );
   `);
+
+  // Migration: add security columns for existing databases
+  try { sqlDb.run('ALTER TABLE users ADD COLUMN security_question TEXT DEFAULT \'\''); } catch {}
+  try { sqlDb.run('ALTER TABLE users ADD COLUMN security_answer TEXT DEFAULT \'\''); } catch {}
 
   save();
   console.log('[DB] Initialized');

@@ -1,0 +1,18 @@
+{
+  "name": "INK — 心情日记",
+  "short_name": "INK日记",
+  "description": "记录每天的心情与故事",
+  "start_url": ".",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#FDF8F5",
+  "theme_color": "#E8927C",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' style='stop-color:%23F0A89A'/><stop offset='50%25' style='stop-color:%23E8927C'/><stop offset='100%25' style='stop-color:%23D4A574'/></linearGradient></defs><rect width='100' height='100' rx='24' fill='url(%23g)'/><text x='50' y='61' text-anchor='middle' font-size='28' font-family='Arial,sans-serif' fill='white' font-weight='700'>INK</text></svg>",
+      "sizes": "100x100",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

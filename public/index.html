@@ -44,6 +44,58 @@
   <main class="main">
     <div class="feed">
 
+      <!-- LOGIN PAGE VIEW -->
+      <div class="view" id="view-login" style="position:absolute;inset:0;z-index:1000;background:var(--bg-primary);">
+        <div class="login-page">
+          <div class="login-brand">
+            <div class="brand-logo">⌐</div>
+            <h1>INK 心情社区</h1>
+            <p>记录心情，分享故事，发现与你共鸣的人</p>
+          </div>
+          <div class="login-form-side">
+            <div class="login-form-card">
+              <div class="tabs">
+                <button class="tab active" onclick="loginPage.switchTab('login')">登录</button>
+                <button class="tab" onclick="loginPage.switchTab('register')">注册</button>
+              </div>
+
+              <!-- Login form -->
+              <div id="loginFormBlock">
+                <div class="field"><label>用户名</label><input type="text" id="lpUsername" placeholder="输入用户名" autocomplete="username"></div>
+                <div class="field"><label>密码</label><input type="password" id="lpPassword" placeholder="输入密码" autocomplete="current-password" onkeydown="if(event.key==='Enter')loginPage.submit()"></div>
+                <div class="checkbox-row"><input type="checkbox" id="lpRemember"><label for="lpRemember">记住我（30天免登录）</label></div>
+                <button class="btn-full" onclick="loginPage.submit()">登录</button>
+                <div class="forgot-link" onclick="loginPage.showForgot()">忘记密码？</div>
+                <div class="divider">或</div>
+                <div class="oauth-btns">
+                  <button class="oauth-btn" onclick="authUI.oauthLogin('github')">🐙 GitHub</button>
+                  <button class="oauth-btn" onclick="authUI.oauthLogin('google')">🔵 Google</button>
+                </div>
+                <div class="toggle-mode">没有账号？<a onclick="loginPage.switchTab('register')">立即注册</a></div>
+              </div>
+
+              <!-- Register form -->
+              <div id="registerFormBlock" style="display:none;">
+                <div class="field"><label>用户名</label><input type="text" id="rpUsername" placeholder="给自己起个名字" autocomplete="off"></div>
+                <div class="field"><label>密码</label><input type="password" id="rpPassword" placeholder="至少4位" autocomplete="new-password"></div>
+                <div class="field"><label>密保问题（找回密码用）</label><input type="text" id="rpQuestion" placeholder="例如：我的第一只宠物叫什么？"></div>
+                <div class="field"><label>密保答案</label><input type="text" id="rpAnswer" placeholder="密保问题的答案" autocomplete="off"></div>
+                <div class="checkbox-row"><input type="checkbox" id="rpRemember"><label for="rpRemember">记住我</label></div>
+                <button class="btn-full" onclick="loginPage.submit()">注册</button>
+                <div class="toggle-mode">已有账号？<a onclick="loginPage.switchTab('login')">立即登录</a></div>
+              </div>
+
+              <!-- Forgot password -->
+              <div class="forgot-steps" id="forgotBlock">
+                <div id="forgotStep1"><div class="field"><label>输入用户名</label><input type="text" id="fpUsername" placeholder="输入你的用户名"></div><button class="btn-full" onclick="loginPage.forgotSubmit()">下一步</button><div class="toggle-mode"><a onclick="loginPage.backToLogin()">← 返回登录</a></div></div>
+                <div id="forgotStep2" style="display:none;"><p style="margin-bottom:12px;font-size:13px;color:var(--text-secondary);">密保问题：<strong id="fpQuestion"></strong></p><div class="field"><label>密保答案</label><input type="text" id="fpAnswer" placeholder="输入答案"></div><div class="field"><label>新密码</label><input type="password" id="fpNewPwd" placeholder="至少4位"></div><button class="btn-full" onclick="loginPage.resetSubmit()">重置密码</button></div>
+                <div id="forgotStep3" style="display:none;text-align:center;"><div style="font-size:48px;margin-bottom:12px;">✅</div><p style="font-size:14px;color:var(--text-secondary);margin-bottom:16px;">密码已重置，请重新登录</p><button class="btn-full" onclick="loginPage.backToLogin()">返回登录</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- HOME VIEW -->
       <div class="view active" id="view-home">
         <div class="topbar"><span class="topbar-title">为你推荐</span><button class="btn-outline" onclick="if(currentUser)router.navigate('write');else authUI.show()">✏️ 写日记</button></div>
@@ -178,7 +230,10 @@
 
 <!-- Profile Edit Modal -->
 <div class="modal-overlay" id="modalOverlay">
-  <div class="modal"><div class="modal-title">编辑个人资料</div><input class="modal-input" type="text" id="editName" placeholder="你的名字" maxlength="20"><textarea class="modal-input" id="editBio" placeholder="写一段个人简介..." style="min-height:80px;resize:vertical;"></textarea><div class="modal-actions"><button class="btn-outline" onclick="app.closeProfileEdit()">取消</button><button class="btn-post" onclick="app.saveProfile()">保存</button></div></div>
+  <div class="modal"><div class="modal-title">编辑个人资料</div>
+<div class="avatar-upload" onclick="document.getElementById('avatarInput').click()"><img id="avatarPreview" src="" alt="头像"><div class="overlay">更换头像</div></div>
+<input type="file" id="avatarInput" accept="image/*" style="display:none;" onchange="app.uploadAvatar(this)">
+<input class="modal-input" type="text" id="editName" placeholder="你的名字" maxlength="20"><textarea class="modal-input" id="editBio" placeholder="写一段个人简介..." style="min-height:80px;resize:vertical;"></textarea><div class="modal-actions"><button class="btn-outline" onclick="app.closeProfileEdit()">取消</button><button class="btn-post" onclick="app.saveProfile()">保存</button></div></div>
 </div>
 
 <!-- Toast & Lightbox -->

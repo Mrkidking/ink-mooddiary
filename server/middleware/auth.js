@@ -1,8 +1,8 @@
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET || 'ink-diary-secret-change-in-production';
 
-function generateToken(userId) {
-  return jwt.sign({ userId }, JWT_SECRET, { expiresIn: '7d' });
+function generateToken(userId, expiresIn = '7d') {
+  return jwt.sign({ userId }, JWT_SECRET, { expiresIn });
 }
 
 // Required auth — returns 401 if not logged in
