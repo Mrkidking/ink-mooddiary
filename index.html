@@ -6,10 +6,9 @@
 <meta name="theme-color" content="#E8927C">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="INK日记">
+<meta name="apple-mobile-web-app-title" content="INK社区">
 <link rel="manifest" href="./manifest.json">
-<title>INK — 心情日记</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<title>INK — 心情社区</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
@@ -43,58 +42,35 @@
     --shadow: 0 4px 12px rgba(61,50,44,0.08);
     --shadow-lg: 0 8px 32px rgba(61,50,44,0.1);
     --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-smooth: 300ms cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-spring: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
   * { margin:0; padding:0; box-sizing:border-box; }
   html { scroll-behavior:smooth; }
-  body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    min-height:100vh;
-    -webkit-font-smoothing:antialiased;
-    overflow-x:hidden;
-  }
+  body { font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:var(--bg-primary); color:var(--text-primary); min-height:100vh; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
 
   /* ---- LAYOUT ---- */
   .app { display:flex; min-height:100vh; max-width:1400px; margin:0 auto; }
-  .app.hidden { display:none; }
 
   /* ---- SIDEBAR ---- */
-  .sidebar {
-    width: 240px; flex-shrink: 0; padding: 12px;
-    display: flex; flex-direction: column;
-    position: sticky; top: 0; height: 100vh;
-    border-right: 1px solid var(--border);
-    background: rgba(253,248,245,0.85);
-    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-    z-index: 100;
-  }
+  .sidebar { width:230px; flex-shrink:0; padding:12px; display:flex; flex-direction:column; position:sticky; top:0; height:100vh; border-right:1px solid var(--border); background:rgba(253,248,245,0.85); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); z-index:100; }
   .logo { display:flex; align-items:center; gap:10px; padding:12px 16px; margin-bottom:8px; text-decoration:none; }
   .logo-icon { width:38px; height:38px; border-radius:var(--radius); background:var(--gradient-ins); display:flex; align-items:center; justify-content:center; font-weight:900; font-size:18px; color:#fff; flex-shrink:0; }
   .logo-text { font-size:22px; font-weight:800; letter-spacing:-0.5px; background:var(--gradient-ins-h); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-
   .nav { flex:1; display:flex; flex-direction:column; gap:2px; }
-  .nav-item {
-    display:flex; align-items:center; gap:14px; padding:10px 16px; border-radius:var(--radius);
-    cursor:pointer; transition:all var(--transition); font-size:15px; font-weight:500;
-    color:var(--text-secondary); position:relative; text-decoration:none;
-  }
+  .nav-item { display:flex; align-items:center; gap:14px; padding:10px 16px; border-radius:var(--radius); cursor:pointer; transition:all var(--transition); font-size:15px; font-weight:500; color:var(--text-secondary); position:relative; text-decoration:none; }
   .nav-item:hover { background:var(--bg-card); color:var(--text-primary); }
   .nav-item.active { color:var(--text-primary); font-weight:600; }
   .nav-item.active::before { content:''; position:absolute; left:0; top:50%; transform:translateY(-50%); width:3px; height:20px; border-radius:0 4px 4px 0; background:var(--gradient-ins); }
-  .nav-icon { width:24px; height:24px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-  .nav-icon svg { width:22px; height:22px; }
+  .nav-badge { margin-left:auto; background:var(--accent-blue); color:#fff; font-size:10px; font-weight:600; padding:2px 7px; border-radius:var(--radius-full); min-width:20px; text-align:center; }
   .sidebar-footer { border-top:1px solid var(--border); padding-top:12px; margin-top:8px; }
-  .user-card { display:flex; align-items:center; gap:10px; padding:8px; border-radius:var(--radius); cursor:pointer; transition:all var(--transition); }
-  .user-card:hover { background:var(--bg-card); }
-  .user-avatar { width:38px; height:38px; border-radius:var(--radius-full); background:var(--gradient-story); padding:2px; flex-shrink:0; }
-  .user-avatar-placeholder { width:100%; height:100%; border-radius:50%; background:var(--bg-elevated); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:15px; color:var(--text-secondary); border:2px solid var(--bg-primary); }
-  .user-info { flex:1; min-width:0; }
-  .user-name { font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .user-handle { font-size:12px; color:var(--text-muted); }
+  .user-card-side { display:flex; align-items:center; gap:10px; padding:8px; border-radius:var(--radius); cursor:pointer; transition:all var(--transition); }
+  .user-card-side:hover { background:var(--bg-card); }
+  .user-avatar-side { width:38px; height:38px; border-radius:50%; background:var(--gradient-story); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:15px; color:#fff; flex-shrink:0; }
+  .user-info-side { flex:1; min-width:0; }
+  .user-name-side { font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .user-handle-side { font-size:12px; color:var(--text-muted); cursor:pointer; }
+  .sidebar-logout { font-size:11px; color:var(--text-muted); cursor:pointer; transition:color var(--transition); }
+  .sidebar-logout:hover { color:var(--accent-blue); }
 
   /* ---- MAIN ---- */
   .main { flex:1; min-width:0; display:flex; gap:0; }
@@ -106,218 +82,149 @@
   .topbar { padding:12px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; background:rgba(253,248,245,0.85); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); z-index:50; }
   .topbar-title { font-size:18px; font-weight:700; letter-spacing:-0.3px; }
 
+  /* ---- GUEST BANNER ---- */
+  .guest-banner { padding:10px 20px; background:var(--gradient-ins-h); color:#fff; display:flex; align-items:center; justify-content:space-between; font-size:13px; font-weight:500; }
+  .guest-banner button { background:rgba(255,255,255,0.2); color:#fff; border:1px solid rgba(255,255,255,0.4); padding:5px 16px; border-radius:var(--radius-full); font-size:12px; font-weight:600; cursor:pointer; transition:all var(--transition); font-family:inherit; }
+  .guest-banner button:hover { background:rgba(255,255,255,0.35); }
+
   /* ---- BUTTONS ---- */
-  .btn-post { padding:8px 22px; border-radius:var(--radius-full); background:var(--gradient-ins-h); color:#fff; font-weight:700; font-size:14px; border:none; cursor:pointer; transition:all var(--transition); position:relative; overflow:hidden; font-family:inherit; }
-  .btn-post::after { content:''; position:absolute; inset:0; background:rgba(255,255,255,0.2); opacity:0; transition:opacity var(--transition); }
+  .btn-post { padding:8px 22px; border-radius:var(--radius-full); background:var(--gradient-ins-h); color:#fff; font-weight:700; font-size:14px; border:none; cursor:pointer; transition:all var(--transition); font-family:inherit; }
   .btn-post:hover { transform:translateY(-2px); box-shadow:0 6px 24px rgba(240,168,154,0.4); }
-  .btn-post:hover::after { opacity:1; }
   .btn-post:active { transform:scale(0.97); }
   .btn-outline { padding:8px 18px; border-radius:var(--radius-full); border:1px solid var(--border); background:var(--bg-card); color:var(--text-primary); font-weight:600; font-size:13px; cursor:pointer; transition:all var(--transition); font-family:inherit; }
   .btn-outline:hover { background:var(--bg-elevated); transform:translateY(-1px); }
-  .btn-ghost { padding:8px 16px; border-radius:var(--radius); background:none; border:none; color:var(--text-secondary); cursor:pointer; font-size:13px; font-family:inherit; transition:all var(--transition); }
-  .btn-ghost:hover { background:var(--bg-elevated); color:var(--text-primary); }
-  .btn-ghost.danger:hover { background:rgba(232,146,124,0.1); color:#E8927C; }
+  .btn-follow { padding:6px 16px; border-radius:var(--radius-full); border:none; background:var(--gradient-ins-h); color:#fff; font-weight:700; font-size:12px; cursor:pointer; transition:all var(--transition); font-family:inherit; }
+  .btn-follow:hover { transform:translateY(-2px); box-shadow:0 6px 24px rgba(240,168,154,0.4); }
+  .btn-follow.following { background:var(--bg-elevated); color:var(--text-secondary); box-shadow:none; }
+  .btn-follow.following:hover { background:rgba(232,146,124,0.1); color:#E8927C; }
 
   /* ---- COMPOSE ---- */
   .compose { padding:16px 20px; border-bottom:1px solid var(--border); display:flex; gap:12px; }
-  .compose-avatar { width:40px; height:40px; border-radius:var(--radius-full); background:var(--gradient-story); padding:2px; flex-shrink:0; }
-  .compose-avatar-inner { width:100%; height:100%; border-radius:50%; background:var(--bg-elevated); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:16px; color:var(--text-secondary); border:2px solid var(--bg-primary); }
+  .compose-avatar { width:40px; height:40px; border-radius:50%; background:var(--gradient-story); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:16px; color:#fff; flex-shrink:0; }
   .compose-body { flex:1; }
   .compose-input { width:100%; background:none; border:none; color:var(--text-primary); font-size:16px; font-family:inherit; resize:none; outline:none; padding:8px 0; min-height:44px; }
   .compose-input::placeholder { color:var(--text-muted); }
   .compose-actions { display:flex; align-items:center; justify-content:space-between; margin-top:4px; }
   .compose-tools { display:flex; gap:4px; align-items:center; }
-  .compose-tool { width:34px; height:34px; border-radius:var(--radius-full); background:none; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all var(--transition); }
-  .compose-tool:hover { background:rgba(61,50,44,0.06); }
-  .compose-tool:hover svg { transform:scale(1.1); }
-  .compose-tool svg { transition:all var(--transition); }
   .compose-moods { display:flex; gap:2px; }
   .compose-mood-btn { width:30px; height:30px; border-radius:50%; border:2px solid transparent; background:none; cursor:pointer; font-size:18px; display:flex; align-items:center; justify-content:center; transition:all var(--transition); padding:0; }
   .compose-mood-btn:hover { background:var(--bg-elevated); transform:scale(1.15); }
   .compose-mood-btn.selected { border-color:var(--accent-blue); background:rgba(232,146,124,0.1); }
+  .privacy-toggle { display:flex; align-items:center; gap:4px; font-size:12px; color:var(--text-muted); cursor:pointer; padding:4px 8px; border-radius:var(--radius); transition:all var(--transition); }
+  .privacy-toggle:hover { background:var(--bg-elevated); }
 
-  /* ---- STORIES ---- */
-  .stories-section { padding:16px 20px; border-bottom:1px solid var(--border); overflow:hidden; }
-  .stories-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
-  .stories-title { font-size:13px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.5px; }
-  .stories-row { display:flex; gap:16px; overflow-x:auto; scrollbar-width:none; }
-  .stories-row::-webkit-scrollbar { display:none; }
-  .story { display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer; flex-shrink:0; transition:transform var(--transition); }
-  .story:hover { transform:translateY(-2px); }
-  .story-ring { width:60px; height:60px; border-radius:50%; padding:2.5px; flex-shrink:0; }
-  .story-ring.has-mood { background:var(--gradient-story); }
-  .story-ring.no-mood { background:var(--border); }
-  .story-ring.today-ring { background:var(--gradient-story); animation:storyPulse 2s ease-in-out infinite; }
-  @keyframes storyPulse { 0%,100% { box-shadow:0 0 0 0 rgba(240,168,154,0.4); } 50% { box-shadow:0 0 0 6px rgba(240,168,154,0); } }
-  .story-placeholder { width:100%; height:100%; border-radius:50%; background:var(--bg-elevated); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:26px; border:2.5px solid var(--bg-primary); }
-  .story-label { font-size:11px; color:var(--text-secondary); max-width:66px; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .story-ring-wrapper { position:relative; }
-
-  /* ---- POST / DIARY CARDS ---- */
-  .post { padding:16px 20px; border-bottom:1px solid var(--border); transition:background var(--transition); cursor:pointer; }
+  /* ---- POST CARDS ---- */
+  .post { padding:16px 20px; border-bottom:1px solid var(--border); transition:background var(--transition); }
   .post:hover { background:var(--bg-card-hover); }
   .post-header { display:flex; gap:10px; align-items:flex-start; margin-bottom:8px; }
-  .post-avatar { width:40px; height:40px; border-radius:50%; flex-shrink:0; background:var(--bg-elevated); display:flex; align-items:center; justify-content:center; font-size:22px; }
+  .post-avatar { width:40px; height:40px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:17px; color:#fff; }
   .post-info { flex:1; min-width:0; }
   .post-name-row { display:flex; align-items:center; gap:4px; flex-wrap:wrap; }
-  .post-name { font-weight:700; font-size:14px; }
+  .post-name { font-weight:700; font-size:14px; cursor:pointer; }
+  .post-name:hover { text-decoration:underline; }
   .post-handle { color:var(--text-muted); font-size:13px; }
   .post-time { color:var(--text-muted); font-size:13px; }
   .post-time::before { content:'·'; margin:0 4px; }
-  .post-more { width:30px; height:30px; border-radius:50%; background:none; border:none; color:var(--text-muted); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all var(--transition); flex-shrink:0; }
-  .post-more:hover { background:rgba(61,50,44,0.06); color:var(--accent-blue); }
   .post-text { font-size:14px; line-height:1.6; margin-bottom:10px; word-break:break-word; white-space:pre-wrap; }
   .post-media { margin-bottom:10px; }
   .post-media-grid { display:grid; gap:4px; border-radius:var(--radius-lg); overflow:hidden; max-height:400px; }
   .post-media-grid.cols-1 { grid-template-columns:1fr; }
   .post-media-grid.cols-2 { grid-template-columns:1fr 1fr; }
-  .post-media-grid.cols-3 { grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; }
-  .post-media-grid.cols-3 .media-item:first-child { grid-row:span 2; }
   .media-item { position:relative; overflow:hidden; cursor:pointer; background:var(--bg-elevated); min-height:160px; }
-  .media-item img { width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94); }
+  .media-item img { width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.6s ease; }
   .media-item:hover img { transform:scale(1.05); }
-  .post-stats { display:flex; align-items:center; gap:16px; }
+  .post-stats { display:flex; align-items:center; gap:8px; }
   .stat-btn { display:flex; align-items:center; gap:4px; background:none; border:none; color:var(--text-muted); font-size:13px; cursor:pointer; padding:6px 8px; border-radius:var(--radius); transition:all var(--transition); font-family:inherit; }
   .stat-btn:hover { background:rgba(61,50,44,0.04); }
-  .stat-btn.edit:hover { color:var(--accent-blue); }
-  .stat-btn.delete:hover { color:var(--accent-pink); }
+  .stat-btn svg { transition:all var(--transition); }
+  .stat-btn.like:hover { color:var(--accent-pink); }
+  .stat-btn.like:hover svg { transform:scale(1.15); }
+  .stat-btn.liked { color:var(--accent-pink); }
+  .stat-btn.liked svg { fill:var(--accent-pink); stroke:var(--accent-pink); }
+  .stat-btn.comment:hover { color:var(--accent-blue); }
+
+  /* ---- COMMENTS ---- */
+  .comments-section { border-top:1px solid var(--border); margin-top:8px; padding-top:8px; }
+  .comment-item { display:flex; gap:8px; padding:6px 0; }
+  .comment-avatar { width:28px; height:28px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px; color:#fff; }
+  .comment-body { flex:1; min-width:0; }
+  .comment-user { font-weight:600; font-size:12px; margin-right:6px; }
+  .comment-text { font-size:13px; color:var(--text-secondary); word-break:break-word; }
+  .comment-time { font-size:11px; color:var(--text-muted); }
+  .comment-input-row { display:flex; gap:8px; margin-top:8px; align-items:center; }
+  .comment-input { flex:1; padding:8px 12px; border:1px solid var(--border); border-radius:var(--radius-full); font-size:13px; font-family:inherit; outline:none; background:var(--bg-primary); color:var(--text-primary); }
+  .comment-input:focus { border-color:var(--accent-blue); }
 
   /* ---- EXPLORE / RIGHT PANEL ---- */
-  #searchInput:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 3px rgba(232,146,124,0.12); }
-  #searchInput::placeholder { color: var(--text-muted); }
   .explore { width:340px; flex-shrink:0; padding:12px 20px; overflow-y:auto; position:sticky; top:0; height:100vh; }
   .explore::-webkit-scrollbar { width:0; }
   .explore-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); margin-bottom:16px; overflow:hidden; }
   .explore-card-header { padding:14px 16px; font-weight:800; font-size:17px; letter-spacing:-0.3px; border-bottom:1px solid var(--border); }
-
-  /* ---- WEATHER CARD ---- */
-  .weather-card-body { padding: 14px 16px; display: flex; align-items: center; gap: 14px; }
-  .weather-icon-wrap { width: 42px; height: 42px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-  .weather-icon-wrap svg { width: 40px; height: 40px; stroke: var(--accent-blue); }
-  .weather-info { flex: 1; min-width: 0; }
-  .weather-city { font-size: 12px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .weather-temp { font-size: 26px; font-weight: 800; color: var(--text-primary); line-height: 1.1; }
-  .weather-desc { font-size: 13px; color: var(--text-secondary); }
-  .weather-extra { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-  .weather-error { padding: 14px 16px; text-align: center; color: var(--text-muted); font-size: 13px; }
   .explore-card-body { padding:12px 16px; }
   .mood-stat-row { display:flex; align-items:center; gap:10px; padding:6px 0; }
   .mood-stat-emoji { font-size:28px; flex-shrink:0; }
-  .mood-stat-info { flex:1; }
-  .mood-stat-label { font-size:14px; font-weight:700; }
-  .mood-stat-sub { font-size:12px; color:var(--text-muted); }
   .stat-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; padding:8px 0; }
   .stat-cell { text-align:center; }
   .stat-cell-num { font-size:22px; font-weight:800; color:var(--accent-blue); }
   .stat-cell-label { font-size:11px; color:var(--text-muted); }
-  .mini-cal { width:100%; }
-  .mini-cal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
-  .mini-cal-month { font-size:13px; font-weight:700; }
-  .mini-cal-nav { width:24px; height:24px; border-radius:50%; border:1px solid var(--border); background:var(--bg-card); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:12px; color:var(--text-muted); transition:all var(--transition); }
-  .mini-cal-nav:hover { background:var(--bg-elevated); }
-  .mini-cal-days { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
-  .mini-cal-day-label { text-align:center; font-size:10px; font-weight:600; color:var(--text-muted); padding:2px 0; }
-  .mini-cal-day { aspect-ratio:1; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:11px; cursor:pointer; transition:all var(--transition); color:var(--text-secondary); }
-  .mini-cal-day:hover { background:var(--bg-elevated); }
-  .mini-cal-day.other { opacity:0.3; }
-  .mini-cal-day.today { font-weight:700; color:var(--accent-blue); }
-  .mini-cal-day.has-entry { position:relative; }
-  .mini-cal-day.has-entry::after { content:''; position:absolute; bottom:2px; width:4px; height:4px; border-radius:50%; background:var(--accent-blue); }
-  .explore-footer { padding:0 4px 20px; }
-  .explore-links { display:flex; flex-wrap:wrap; gap:4px 12px; margin-bottom:8px; }
-  .explore-links a { font-size:12px; color:var(--text-muted); text-decoration:none; transition:color var(--transition); white-space:nowrap; }
-  .explore-links a:hover { color:var(--text-secondary); text-decoration:underline; }
-  .explore-copyright { font-size:12px; color:var(--text-muted); }
 
-  /* ---- WARM AMBIENT ---- */
-  .warm-ambient { position:fixed; border-radius:50%; filter:blur(180px); opacity:0.12; pointer-events:none; z-index:-1; }
-  .warm-ambient.amb-1 { width:500px; height:500px; background:#F0D5C8; top:-200px; left:-150px; }
-  .warm-ambient.amb-2 { width:400px; height:400px; background:#E8D0C0; bottom:-150px; right:-100px; }
-  .warm-ambient.amb-3 { width:300px; height:300px; background:#F5E0D4; top:50%; left:50%; transform:translate(-50%,-50%); opacity:0.08; }
+  /* Weather */
+  .weather-card-body { padding:14px 16px; display:flex; align-items:center; gap:14px; }
+  .weather-icon-wrap { width:42px; height:42px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+  .weather-icon-wrap svg { width:40px; height:40px; stroke:var(--accent-blue); }
+  .weather-info { flex:1; min-width:0; }
+  .weather-city { font-size:12px; color:var(--text-muted); }
+  .weather-temp { font-size:26px; font-weight:800; line-height:1.1; }
+  .weather-desc { font-size:13px; color:var(--text-secondary); }
+  .weather-extra { font-size:11px; color:var(--text-muted); margin-top:2px; }
+  .weather-error { padding:14px 16px; text-align:center; color:var(--text-muted); font-size:13px; }
 
-  /* ---- EMPTY STATE ---- */
-  .empty-state { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:60px 24px; text-align:center; }
-  .empty-icon { font-size:56px; margin-bottom:12px; }
-  .empty-title { font-size:18px; font-weight:700; margin-bottom:6px; }
-  .empty-desc { color:var(--text-secondary); font-size:14px; margin-bottom:20px; max-width:300px; line-height:1.5; }
+  /* Who to follow */
+  .who-item { display:flex; align-items:center; gap:10px; padding:8px 0; }
+  .who-avatar { width:36px; height:36px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; color:#fff; }
+  .who-info { flex:1; min-width:0; }
+  .who-name { font-size:13px; font-weight:700; }
+  .who-handle { font-size:11px; color:var(--text-muted); }
 
-  /* ---- WRITE VIEW ---- */
-  .write-wrap { padding:16px 20px 80px; }
-  .write-section { margin-bottom:20px; }
-  .write-label { display:block; font-size:12px; font-weight:700; color:var(--text-secondary); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px; }
-  .mood-picker { display:flex; gap:8px; flex-wrap:wrap; }
-  .mood-btn { width:54px; height:54px; border-radius:var(--radius); border:2px solid var(--border); background:var(--bg-card); cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; transition:all var(--transition); font-family:inherit; }
-  .mood-btn:hover { border-color:var(--accent-blue); transform:translateY(-2px); box-shadow:var(--shadow); }
-  .mood-btn.selected { border-color:var(--accent-blue); background:rgba(232,146,124,0.08); }
-  .mood-emoji { font-size:22px; }
-  .mood-label { font-size:10px; color:var(--text-muted); font-weight:500; }
-  .write-input { width:100%; padding:12px 16px; border:1px solid var(--border); border-radius:var(--radius); font-size:15px; font-family:inherit; color:var(--text-primary); background:var(--bg-card); outline:none; transition:all var(--transition); }
-  .write-input:focus { border-color:var(--accent-blue); box-shadow:0 0 0 3px rgba(232,146,124,0.12); }
-  .write-input::placeholder { color:var(--text-muted); }
-  .write-textarea { width:100%; min-height:180px; padding:14px 16px; border:1px solid var(--border); border-radius:var(--radius); font-size:15px; font-family:inherit; color:var(--text-primary); background:var(--bg-card); outline:none; resize:vertical; line-height:1.7; transition:all var(--transition); }
-  .write-textarea:focus { border-color:var(--accent-blue); box-shadow:0 0 0 3px rgba(232,146,124,0.12); }
-  .write-textarea::placeholder { color:var(--text-muted); }
-  .image-upload-area { display:flex; gap:10px; flex-wrap:wrap; }
-  .image-upload-btn { width:96px; height:96px; border-radius:var(--radius); border:2px dashed var(--border); background:var(--bg-card); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; cursor:pointer; transition:all var(--transition); color:var(--text-muted); font-size:12px; }
-  .image-upload-btn:hover { border-color:var(--accent-blue); color:var(--accent-blue); }
-  .image-upload-btn svg { width:24px; height:24px; }
-  .image-preview { width:96px; height:96px; border-radius:var(--radius); position:relative; overflow:hidden; border:1px solid var(--border); }
-  .image-preview img { width:100%; height:100%; object-fit:cover; }
-  .image-preview .remove-img { position:absolute; top:4px; right:4px; width:22px; height:22px; border-radius:50%; background:rgba(0,0,0,0.6); color:#fff; border:none; cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center; }
-  .write-footer { display:flex; justify-content:space-between; align-items:center; padding-top:8px; gap:12px; }
-  .char-count { font-size:12px; color:var(--text-muted); }
-
-  /* ---- CALENDAR ---- */
-  .cal-wrap { padding:16px 20px 80px; max-width:500px; margin:0 auto; width:100%; }
-  .cal-nav-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
-  .cal-month-title { font-size:18px; font-weight:700; }
-  .cal-nav-btn { width:34px; height:34px; border-radius:50%; border:1px solid var(--border); background:var(--bg-card); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all var(--transition); color:var(--text-secondary); }
-  .cal-nav-btn:hover { background:var(--bg-elevated); color:var(--text-primary); }
-  .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
-  .cal-day-label { text-align:center; font-size:12px; font-weight:600; color:var(--text-muted); padding:8px 0; }
-  .cal-day { aspect-ratio:1; border-radius:var(--radius); display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; transition:all var(--transition); font-size:14px; font-weight:500; border:1px solid transparent; }
-  .cal-day:hover { background:var(--bg-card); border-color:var(--border); }
-  .cal-day.other-month { color:var(--text-muted); opacity:0.35; }
-  .cal-day.today { font-weight:700; color:var(--accent-blue); }
-  .cal-day.has-entry { background:var(--bg-card); border-color:var(--border); }
-  .cal-day.selected { border-color:var(--accent-blue); background:rgba(232,146,124,0.08); }
-  .cal-day .day-num { font-size:13px; }
-  .cal-day .day-mood { font-size:18px; margin-top:1px; }
-  .cal-preview { margin-top:16px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:16px; }
-  .cal-preview-empty { color:var(--text-muted); font-size:13px; text-align:center; padding:12px; }
-
-  /* ---- PROFILE ---- */
-  .profile-wrap { padding:16px 20px 80px; }
-  .profile-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:28px; text-align:center; margin-bottom:20px; }
-  .profile-avatar { width:80px; height:80px; border-radius:50%; background:var(--gradient-ins); display:flex; align-items:center; justify-content:center; font-size:34px; font-weight:800; color:#fff; margin:0 auto 16px; }
-  .profile-name { font-size:20px; font-weight:700; margin-bottom:4px; }
-  .profile-handle { font-size:14px; color:var(--text-muted); margin-bottom:8px; }
-  .profile-bio { font-size:14px; color:var(--text-secondary); margin-bottom:16px; line-height:1.5; }
-  .profile-joined { font-size:12px; color:var(--text-muted); }
-  .profile-stats-row { display:flex; justify-content:center; gap:32px; margin-bottom:24px; }
-  .profile-stat { text-align:center; }
-  .profile-stat-num { font-size:28px; font-weight:800; color:var(--accent-blue); }
-  .profile-stat-label { font-size:12px; color:var(--text-muted); margin-top:2px; }
-  .mood-dist { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:20px; margin-bottom:16px; }
-  .mood-dist-title { font-size:14px; font-weight:700; margin-bottom:14px; }
-  .mood-dist-row { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
-  .mood-dist-emoji { font-size:18px; width:28px; text-align:center; flex-shrink:0; }
-  .mood-dist-bar-wrap { flex:1; height:8px; background:var(--bg-elevated); border-radius:4px; overflow:hidden; }
-  .mood-dist-bar { height:100%; border-radius:4px; background:var(--gradient-ins-h); transition:width 0.6s ease; }
-  .mood-dist-count { font-size:12px; color:var(--text-muted); width:24px; text-align:right; flex-shrink:0; }
-  .profile-actions-row { display:flex; gap:8px; flex-wrap:wrap; }
+  /* Tag cloud */
+  .tag-cloud { display:flex; flex-wrap:wrap; gap:6px; }
+  .tag-pill { padding:5px 14px; border-radius:var(--radius-full); background:var(--bg-elevated); color:var(--text-secondary); font-size:12px; font-weight:500; cursor:pointer; transition:all var(--transition); border:1px solid transparent; }
+  .tag-pill:hover { border-color:var(--accent-blue); color:var(--accent-blue); transform:translateY(-1px); }
+  .tag-pill.active { background:var(--accent-blue); color:#fff; border-color:var(--accent-blue); }
 
   /* ---- MODAL ---- */
   .modal-overlay { display:none; position:fixed; inset:0; background:rgba(61,50,44,0.3); backdrop-filter:blur(4px); z-index:500; align-items:center; justify-content:center; }
   .modal-overlay.open { display:flex; }
-  .modal { background:var(--bg-card); border-radius:var(--radius-xl); padding:28px; width:90%; max-width:420px; box-shadow:var(--shadow-lg); border:1px solid var(--border); }
-  .modal-title { font-size:18px; font-weight:700; margin-bottom:20px; }
-  .modal-input { width:100%; padding:10px 14px; border:1px solid var(--border); border-radius:var(--radius); font-size:14px; font-family:inherit; color:var(--text-primary); background:var(--bg-primary); outline:none; margin-bottom:12px; transition:all var(--transition); }
+  .modal { background:var(--bg-card); border-radius:var(--radius-xl); padding:28px; width:90%; max-width:400px; box-shadow:var(--shadow-lg); border:1px solid var(--border); }
+  .modal-title { font-size:18px; font-weight:700; margin-bottom:20px; text-align:center; }
+  .modal-tabs { display:flex; gap:0; margin-bottom:18px; border-radius:var(--radius); overflow:hidden; border:1px solid var(--border); }
+  .modal-tab { flex:1; padding:10px; border:none; background:var(--bg-card); color:var(--text-secondary); font-size:14px; font-weight:600; cursor:pointer; transition:all var(--transition); font-family:inherit; }
+  .modal-tab.active { background:var(--accent-blue); color:#fff; }
+  .modal-input { width:100%; padding:10px 14px; border:1px solid var(--border); border-radius:var(--radius); font-size:14px; font-family:inherit; color:var(--text-primary); background:var(--bg-primary); outline:none; margin-bottom:10px; transition:all var(--transition); }
   .modal-input:focus { border-color:var(--accent-blue); }
-  .modal-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:20px; }
+  .modal-error { font-size:12px; color:#E8927C; margin:4px 0 8px; min-height:18px; }
+  .modal-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:16px; }
+
+  /* ---- LOGIN MODAL ---- */
+  .login-overlay { display:none; position:fixed; inset:0; background:rgba(61,50,44,0.4); backdrop-filter:blur(6px); z-index:9999; align-items:center; justify-content:center; }
+  .login-overlay.open { display:flex; }
+  .login-card { width:90%; max-width:400px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-xl); padding:32px 28px; box-shadow:var(--shadow-lg); }
+  .login-logo { width:52px; height:52px; border-radius:var(--radius); background:var(--gradient-ins); display:flex; align-items:center; justify-content:center; font-weight:900; font-size:26px; color:#fff; margin:0 auto 14px; }
+  .login-title { font-size:20px; font-weight:800; text-align:center; letter-spacing:-0.3px; margin-bottom:6px; }
+  .login-subtitle { font-size:13px; color:var(--text-secondary); text-align:center; margin-bottom:18px; }
+  .login-tabs { display:flex; gap:0; margin-bottom:18px; border-radius:var(--radius); overflow:hidden; border:1px solid var(--border); }
+  .login-tab { flex:1; padding:10px; border:none; background:var(--bg-card); color:var(--text-secondary); font-size:14px; font-weight:600; cursor:pointer; transition:all var(--transition); font-family:inherit; }
+  .login-tab.active { background:var(--accent-blue); color:#fff; }
+  .login-input { width:100%; padding:11px 14px; border:1px solid var(--border); border-radius:var(--radius); font-size:14px; font-family:inherit; color:var(--text-primary); background:var(--bg-primary); outline:none; margin-bottom:8px; transition:all var(--transition); }
+  .login-input:focus { border-color:var(--accent-blue); box-shadow:0 0 0 3px rgba(232,146,124,0.12); }
+  .login-input::placeholder { color:var(--text-muted); }
+  .login-error { font-size:12px; color:#E8927C; margin:2px 0 6px; min-height:16px; }
+  .login-btn { width:100%; padding:11px; border-radius:var(--radius-full); background:var(--gradient-ins-h); color:#fff; font-weight:700; font-size:15px; border:none; cursor:pointer; transition:all var(--transition); font-family:inherit; }
+  .login-btn:hover { transform:translateY(-2px); box-shadow:0 6px 24px rgba(240,168,154,0.4); }
+  .login-btn:disabled { opacity:0.5; cursor:not-allowed; transform:none; box-shadow:none; }
 
   /* ---- TOAST ---- */
-  .toast { position:fixed; bottom:80px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--text-primary); color:#fff; padding:10px 24px; border-radius:var(--radius-full); font-size:14px; font-weight:500; opacity:0; transition:all var(--transition-smooth); pointer-events:none; z-index:600; }
+  .toast { position:fixed; bottom:80px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--text-primary); color:#fff; padding:10px 24px; border-radius:var(--radius-full); font-size:14px; font-weight:500; opacity:0; transition:all var(--transition); pointer-events:none; z-index:600; }
   .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
   /* Lightbox */
@@ -328,316 +235,258 @@
   /* ---- MOBILE NAV ---- */
   .mobile-nav { display:none; position:fixed; bottom:0; left:0; right:0; background:rgba(253,248,245,0.92); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-top:1px solid var(--border); padding:6px 0 env(safe-area-inset-bottom); z-index:200; }
   .mobile-nav-row { display:flex; justify-content:space-around; }
-  .mobile-nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; padding:6px 12px; color:var(--text-muted); cursor:pointer; font-size:10px; font-weight:500; transition:all var(--transition); background:none; border:none; font-family:inherit; }
+  .mobile-nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; padding:6px 10px; color:var(--text-muted); cursor:pointer; font-size:10px; font-weight:500; transition:all var(--transition); background:none; border:none; font-family:inherit; }
   .mobile-nav-item.active { color:var(--accent-blue); }
-
-  /* ---- LOGIN OVERLAY ---- */
-  .login-overlay { position:fixed; inset:0; background:var(--bg-primary); display:flex; align-items:center; justify-content:center; z-index:9999; transition:opacity 0.4s ease, visibility 0.4s ease; }
-  .login-overlay.hidden { opacity:0; visibility:hidden; pointer-events:none; }
-  .login-card { width:90%; max-width:380px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-xl); padding:36px 28px; text-align:center; box-shadow:var(--shadow-lg); }
-  .login-logo { width:56px; height:56px; border-radius:var(--radius); background:var(--gradient-ins); display:flex; align-items:center; justify-content:center; font-weight:900; font-size:28px; color:#fff; margin:0 auto 16px; }
-  .login-title { font-size:20px; font-weight:800; letter-spacing:-0.3px; margin-bottom:4px; }
-  .login-subtitle { font-size:13px; color:var(--text-secondary); margin-bottom:20px; }
-  .login-tabs { display:flex; gap:0; margin-bottom:20px; border-radius:var(--radius); overflow:hidden; border:1px solid var(--border); }
-  .login-tab { flex:1; padding:10px; border:none; background:var(--bg-card); color:var(--text-secondary); font-size:14px; font-weight:600; cursor:pointer; transition:all var(--transition); font-family:inherit; }
-  .login-tab.active { background:var(--accent-blue); color:#fff; }
-  .login-input { width:100%; padding:12px 16px; border:1px solid var(--border); border-radius:var(--radius); font-size:15px; font-family:inherit; color:var(--text-primary); background:var(--bg-primary); outline:none; transition:all var(--transition); margin-bottom:10px; }
-  .login-input:focus { border-color:var(--accent-blue); box-shadow:0 0 0 3px rgba(232,146,124,0.12); }
-  .login-input::placeholder { color:var(--text-muted); }
-  .login-error { font-size:12px; color:#E8927C; margin:4px 0 8px; min-height:18px; }
-  .login-btn { width:100%; padding:12px; border-radius:var(--radius-full); background:var(--gradient-ins-h); color:#fff; font-weight:700; font-size:15px; border:none; cursor:pointer; transition:all var(--transition); font-family:inherit; }
-  .login-btn:hover { transform:translateY(-2px); box-shadow:0 6px 24px rgba(240,168,154,0.4); }
-  .login-btn:active { transform:scale(0.97); }
-  .login-btn:disabled { opacity:0.5; cursor:not-allowed; transform:none; box-shadow:none; }
 
   /* Animations */
   @keyframes fadeInUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
   .post { animation:fadeInUp 0.4s ease-out both; }
+  @keyframes heartbeat { 0%,100%{transform:scale(1);} 25%{transform:scale(1.3);} 50%{transform:scale(1);} 75%{transform:scale(1.3);} }
+  .like-anim { animation:heartbeat 0.6s ease-in-out; }
 
-  /* ---- SCROLLBAR ---- */
   ::-webkit-scrollbar { width:4px; }
   ::-webkit-scrollbar-track { background:transparent; }
   ::-webkit-scrollbar-thumb { background:var(--border-light); border-radius:4px; }
 
-  /* ---- RESPONSIVE ---- */
   @media (max-width:1200px) { .explore { width:280px; padding:12px; } }
   @media (max-width:1000px) { .explore { display:none; } .feed { max-width:none; } }
   @media (max-width:680px) {
     .sidebar { display:none; } .mobile-nav { display:block; } .feed { border-right:none; }
-    .compose { padding:12px 16px; } .post { padding:12px 16px; }
-    .stories-section { padding:12px 16px; } .topbar { padding:10px 16px; }
-    .write-wrap { padding:12px 16px 80px; } .cal-wrap { padding:12px 16px 80px; }
-    .profile-wrap { padding:12px 16px 80px; }
+    .topbar { padding:10px 16px; } .post { padding:12px 16px; } .compose { padding:12px 16px; }
     .post-media-grid { border-radius:0; margin:0 -16px; }
-    .mood-btn { width:46px; height:46px; } .mood-emoji { font-size:18px; }
-    .image-upload-btn, .image-preview { width:80px; height:80px; }
-    .profile-avatar { width:64px; height:64px; font-size:28px; }
-    .profile-stats-row { gap:20px; } .profile-stat-num { font-size:22px; }
   }
 </style>
 </head>
 <body>
 
-<div class="warm-ambient amb-1"></div>
-<div class="warm-ambient amb-2"></div>
-<div class="warm-ambient amb-3"></div>
+<div class="app">
 
-<!-- ====== LOGIN OVERLAY ====== -->
-<div class="login-overlay" id="loginOverlay">
-  <div class="login-card">
-    <div class="login-logo">⌐</div>
-    <div class="login-title">INK 心情日记</div>
-    <div class="login-subtitle" id="loginSubtitle">登录你的账号</div>
-    <div class="login-tabs">
-      <button class="login-tab active" data-tab="login" onclick="authHandler.switchTab('login')">登录</button>
-      <button class="login-tab" data-tab="register" onclick="authHandler.switchTab('register')">注册</button>
-    </div>
-    <input type="text" class="login-input" id="loginName" placeholder="你的名字" maxlength="20" style="display:none;">
-    <input type="email" class="login-input" id="loginEmail" placeholder="电子邮箱" autocomplete="email">
-    <input type="password" class="login-input" id="loginPassword" placeholder="密码（至少 6 位）" maxlength="64" autocomplete="off" onkeydown="if(event.key==='Enter')authHandler.submit()">
-    <div class="login-error" id="loginError"></div>
-    <button class="login-btn" id="loginBtn" onclick="authHandler.submit()">登录</button>
-  </div>
-</div>
-
-<!-- ====== APP (hidden until login) ====== -->
-<div class="app hidden" id="appContainer">
-
-  <!-- SIDEBAR -->
+  <!-- ====== SIDEBAR ====== -->
   <aside class="sidebar">
     <a class="logo" href="#home">
       <div class="logo-icon">⌐</div>
       <span class="logo-text">INK</span>
     </a>
-    <nav class="nav">
+    <nav class="nav" id="sideNav">
       <a class="nav-item active" href="#home" data-route="home">
-        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
-        日记
+        <span>🏠</span> 首页
       </a>
-      <a class="nav-item" href="#write" data-route="write">
-        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
-        写日记
+      <a class="nav-item" href="#explore" data-route="explore">
+        <span>🔍</span> 探索
+      </a>
+      <a class="nav-item" href="#write" data-route="write" id="navWrite">
+        <span>✏️</span> 写日记
+        <span class="nav-badge" id="navWriteLock" style="display:none;">🔒</span>
       </a>
       <a class="nav-item" href="#calendar" data-route="calendar">
-        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
-        心情日历
+        <span>🗓️</span> 心情日历
       </a>
-      <a class="nav-item" href="#profile" data-route="profile">
-        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
-        我的
+      <a class="nav-item" href="#profile" data-route="profile" id="navProfile">
+        <span>👤</span> 我的
       </a>
     </nav>
     <div class="sidebar-footer">
-      <div class="user-card" onclick="router.navigate('profile')">
-        <div class="user-avatar">
-          <div class="user-avatar-placeholder" id="sidebarAvatar">?</div>
+      <div class="user-card-side" id="sidebarUserCard" onclick="if(currentUser)router.navigate('profile');else authUI.showLogin();">
+        <div class="user-avatar-side" id="sidebarAvatar">?</div>
+        <div class="user-info-side">
+          <div class="user-name-side" id="sidebarName">未登录</div>
+          <div class="user-handle-side" id="sidebarHandle">点击登录</div>
         </div>
-        <div class="user-info">
-          <div class="user-name" id="sidebarName">未设置</div>
-          <div class="user-handle" id="sidebarHandle">点击设置资料</div>
-        </div>
+      </div>
+      <div style="padding:4px 8px 0;">
+        <span class="sidebar-logout" id="sidebarLogout" style="display:none;" onclick="authStore.logout()">退出登录</span>
       </div>
     </div>
   </aside>
 
-  <!-- MAIN -->
+  <!-- ====== MAIN ====== -->
   <main class="main">
     <div class="feed">
 
-      <!-- HOME VIEW -->
+      <!-- === HOME VIEW === -->
       <div class="view active" id="view-home">
         <div class="topbar">
           <span class="topbar-title">为你推荐</span>
-          <button class="btn-outline" onclick="router.navigate('write')">✏️ 写日记</button>
+          <button class="btn-outline" onclick="if(currentUser)router.navigate('write');else authUI.showLogin();">✏️ 写日记</button>
         </div>
-        <div class="compose">
-          <div class="compose-avatar">
-            <div class="compose-avatar-inner" id="composeAvatar">?</div>
-          </div>
+        <div class="guest-banner" id="guestBanner" style="display:none;">
+          <span>登录以记录心情、参与互动</span>
+          <button onclick="authUI.showLogin()">登录 / 注册</button>
+        </div>
+        <div class="compose" id="homeCompose" style="display:none;">
+          <div class="compose-avatar" id="composeAvatar">?</div>
           <div class="compose-body">
             <textarea class="compose-input" id="quickContent" placeholder="今天心情如何...？" rows="1"></textarea>
             <div class="compose-actions">
               <div class="compose-tools">
                 <div class="compose-moods" id="quickMoods"></div>
-                <button class="compose-tool" onclick="document.getElementById('quickImageInput').click()" title="添加图片">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E8927C" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                </button>
+                <input type="file" id="quickImageInput" accept="image/*" multiple style="display:none" onchange="quickImg.add(this)">
               </div>
-              <input type="file" id="quickImageInput" accept="image/*" multiple style="display:none" onchange="quickImageHandler.addImages(this)">
-              <button class="btn-post" onclick="app.quickPublish()">发布</button>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span class="privacy-toggle" id="privacyToggle" onclick="app.togglePrivacy()" title="公开/仅自己可见">🌐 公开</span>
+                <button class="btn-post" onclick="app.quickPublish()">发布</button>
+              </div>
             </div>
             <div id="quickImagePreviews" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;"></div>
           </div>
         </div>
-        <div class="stories-section">
-          <div class="stories-header">
-            <span class="stories-title">今日心情</span>
-          </div>
-          <div class="stories-row" id="moodStories"></div>
-        </div>
         <div class="posts" id="diaryPosts"></div>
-        <div class="empty-state" id="emptyHome" style="display:none">
-          <div class="empty-icon">📝</div>
-          <div class="empty-title">还没有日记</div>
-          <div class="empty-desc">在上方快速记录今天的心情，或点击"写日记"进入完整编辑器</div>
+        <div class="empty-state" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 24px;text-align:center;">
+          <div style="font-size:56px;margin-bottom:12px;">🌍</div>
+          <div style="font-size:18px;font-weight:700;margin-bottom:6px;">还没有公开日记</div>
+          <div style="color:var(--text-secondary);font-size:14px;">成为第一个分享心情的人吧</div>
         </div>
       </div>
 
-      <!-- WRITE VIEW -->
+      <!-- === EXPLORE VIEW === -->
+      <div class="view" id="view-explore">
+        <div class="topbar">
+          <span class="topbar-title">🔍 探索</span>
+        </div>
+        <div style="padding:14px 20px;border-bottom:1px solid var(--border);">
+          <div style="font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:10px;">按心情筛选</div>
+          <div class="tag-cloud" id="exploreTags"></div>
+        </div>
+        <div class="posts" id="explorePosts"></div>
+        <div class="empty-state" id="exploreEmpty" style="display:none;flex:1;flex-direction:column;align-items:center;justify-content:center;padding:60px 24px;text-align:center;">
+          <div style="font-size:48px;margin-bottom:8px;">🔍</div>
+          <div style="color:var(--text-secondary);font-size:14px;">没有找到匹配的心情</div>
+        </div>
+      </div>
+
+      <!-- === WRITE VIEW === -->
       <div class="view" id="view-write">
         <div class="topbar">
-          <span class="topbar-title" id="writeTitle">新日记</span>
-          <button class="btn-ghost" onclick="router.navigate('home')">取消</button>
+          <span class="topbar-title">✏️ 新日记</span>
+          <button class="btn-outline" onclick="router.navigate('home')">取消</button>
         </div>
-        <div class="write-wrap">
-          <div class="write-section">
-            <label class="write-label">今日心情</label>
-            <div class="mood-picker" id="moodPicker"></div>
-          </div>
-          <div class="write-section">
-            <label class="write-label">标题</label>
-            <input class="write-input" type="text" id="diaryTitle" placeholder="给你的日记起个标题..." maxlength="60">
-          </div>
-          <div class="write-section">
-            <label class="write-label">内容</label>
-            <textarea class="write-textarea" id="diaryContent" placeholder="今天发生了什么...？"></textarea>
-          </div>
-          <div class="write-section">
-            <label class="write-label">图片</label>
-            <div class="image-upload-area" id="imageArea">
-              <div class="image-upload-btn" onclick="document.getElementById('imageInput').click()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                添加图片
-              </div>
+        <div style="padding:16px 20px;">
+          <div style="margin-bottom:16px;"><span style="font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;">心情</span><div class="mood-picker" id="moodPicker" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;"></div></div>
+          <div style="margin-bottom:16px;"><span style="font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;">标题</span><input class="write-input" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius);margin-top:8px;" type="text" id="diaryTitle" placeholder="给你的日记起个标题..." maxlength="60"></div>
+          <div style="margin-bottom:16px;"><span style="font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;">内容</span><textarea class="write-textarea" style="width:100%;min-height:180px;padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius);margin-top:8px;resize:vertical;line-height:1.7;font-size:15px;font-family:inherit;background:var(--bg-card);outline:none;" id="diaryContent" placeholder="今天发生了什么...？"></textarea></div>
+          <div style="margin-bottom:16px;"><span style="font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;">图片</span><div class="image-upload-area" id="imageArea" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;"><div style="width:96px;height:96px;border-radius:var(--radius);border:2px dashed var(--border);background:var(--bg-card);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;color:var(--text-muted);font-size:12px;" onclick="document.getElementById('imageInput').click()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>添加图片</div></div><input type="file" id="imageInput" accept="image/*" multiple style="display:none" onchange="imgHandler.add(this)"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:12px;color:var(--text-muted);" id="charCount">0 字</span>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <span class="privacy-toggle" id="writePrivacyToggle" onclick="app.toggleWritePrivacy()" style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text-muted);cursor:pointer;">🌐 公开</span>
+              <button class="btn-post" onclick="app.saveEntry()">保存日记</button>
             </div>
-            <input type="file" id="imageInput" accept="image/*" multiple style="display:none" onchange="imageHandler.addImages(this)">
           </div>
-          <div class="write-footer">
-            <span class="char-count" id="charCount">0 字</span>
-            <button class="btn-post" id="btnSave" onclick="app.saveEntry()">保存日记</button>
-          </div>
-          <input type="hidden" id="editId" value="">
-          <input type="hidden" id="editDate" value="">
         </div>
+        <input type="hidden" id="editId" value="">
+        <input type="hidden" id="editDate" value="">
       </div>
 
-      <!-- CALENDAR VIEW -->
+      <!-- === CALENDAR VIEW === -->
       <div class="view" id="view-calendar">
         <div class="topbar">
           <span class="topbar-title">🗓️ 心情日历</span>
-          <button class="btn-outline" onclick="calendarView.goToday()">今天</button>
+          <button class="btn-outline" onclick="calView.goToday()">今天</button>
         </div>
-        <div class="cal-wrap">
-          <div class="cal-nav-row">
-            <button class="cal-nav-btn" onclick="calendarView.prevMonth()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
-            <span class="cal-month-title" id="calMonthTitle"></span>
-            <button class="cal-nav-btn" onclick="calendarView.nextMonth()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>
+        <div style="padding:16px 20px;max-width:500px;margin:0 auto;width:100%;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+            <button style="width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:var(--bg-card);cursor:pointer;" onclick="calView.prevMonth()">◂</button>
+            <span style="font-size:18px;font-weight:700;" id="calMonthTitle"></span>
+            <button style="width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:var(--bg-card);cursor:pointer;" onclick="calView.nextMonth()">▸</button>
           </div>
-          <div class="cal-grid" id="calGrid"></div>
-          <div class="cal-preview" id="calPreview"><div class="cal-preview-empty">点击某一天查看详情</div></div>
+          <div class="cal-grid" id="calGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;"></div>
+          <div style="margin-top:16px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;" id="calPreview">
+            <div style="color:var(--text-muted);font-size:13px;text-align:center;">点击某一天查看公开心情</div>
+          </div>
         </div>
       </div>
 
-      <!-- PROFILE VIEW -->
+      <!-- === PROFILE VIEW === -->
       <div class="view" id="view-profile">
         <div class="topbar">
-          <span class="topbar-title">👤 我的</span>
-          <button class="btn-outline" onclick="app.openProfileEdit()">编辑资料</button>
+          <span class="topbar-title">👤 个人主页</span>
+          <span>
+            <button class="btn-outline" id="btnEditProfile" style="display:none;" onclick="app.openProfileEdit()">编辑资料</button>
+            <button class="btn-follow" id="btnFollowProfile" style="display:none;" onclick="app.toggleFollowProfile()">关注</button>
+          </span>
         </div>
-        <div class="profile-wrap">
-          <div class="profile-card">
-            <div class="profile-avatar" id="profileAvatar">?</div>
-            <div class="profile-name" id="profileName">未设置</div>
-            <div class="profile-handle" id="profileHandle">@unknown</div>
-            <div class="profile-bio" id="profileBio">还没有个人简介...</div>
-            <div class="profile-joined" id="profileJoined"></div>
+        <div style="padding:16px 20px;">
+          <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px;text-align:center;margin-bottom:16px;">
+            <div style="width:80px;height:80px;border-radius:50%;background:var(--gradient-ins);display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:800;color:#fff;margin:0 auto 16px;" id="profileAvatar">?</div>
+            <div style="font-size:20px;font-weight:700;margin-bottom:4px;" id="profileName">--</div>
+            <div style="font-size:14px;color:var(--text-muted);margin-bottom:8px;" id="profileHandle">@--</div>
+            <div style="font-size:14px;color:var(--text-secondary);margin-bottom:16px;" id="profileBio"></div>
+            <div style="display:flex;justify-content:center;gap:32px;">
+              <div style="text-align:center;"><div style="font-size:24px;font-weight:800;color:var(--accent-blue);" id="profileEntryCount">0</div><div style="font-size:12px;color:var(--text-muted);">日记</div></div>
+              <div style="text-align:center;"><div style="font-size:24px;font-weight:800;" id="profileFollowerCount">0</div><div style="font-size:12px;color:var(--text-muted);">关注者</div></div>
+              <div style="text-align:center;"><div style="font-size:24px;font-weight:800;" id="profileFollowingCount">0</div><div style="font-size:12px;color:var(--text-muted);">关注中</div></div>
+            </div>
           </div>
-          <div class="profile-stats-row">
-            <div class="profile-stat"><div class="profile-stat-num" id="statTotal">0</div><div class="profile-stat-label">总日记</div></div>
-            <div class="profile-stat"><div class="profile-stat-num" id="statMonth">0</div><div class="profile-stat-label">本月</div></div>
-            <div class="profile-stat"><div class="profile-stat-num" id="statStreak">0</div><div class="profile-stat-label">连续天数</div></div>
-          </div>
-          <div class="mood-dist">
-            <div class="mood-dist-title">本月心情分布</div>
-            <div id="moodDist"></div>
-          </div>
-          <div class="profile-actions-row">
-            <button class="btn-outline" onclick="app.exportData()">导出数据</button>
-            <button class="btn-outline" onclick="document.getElementById('importInput').click()">导入数据</button>
-            <input type="file" id="importInput" accept=".json" style="display:none" onchange="app.importData(this)">
-            <button class="btn-outline" onclick="app.openChangePassword()">🔒 修改密码</button>
-            <button class="btn-ghost danger" onclick="authHandler.logout()">🚪 退出登录</button>
-          </div>
+          <div class="posts" id="profilePosts"></div>
         </div>
       </div>
 
     </div>
   </main>
 
-  <!-- RIGHT PANEL -->
+  <!-- ====== RIGHT PANEL ====== -->
   <aside class="explore" id="explorePanel">
-    <div class="search-box" style="position:relative;margin-bottom:16px;margin-top:4px;">
-      <svg style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="text" id="searchInput" placeholder="搜索日记..." style="width:100%;padding:10px 16px 10px 42px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-full);color:var(--text-primary);font-size:14px;font-family:inherit;outline:none;transition:all var(--transition);" oninput="app.searchEntries(this.value)">
+    <div style="position:relative;margin-bottom:16px;margin-top:4px;">
+      <svg style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="searchInput" placeholder="搜索日记..." style="width:100%;padding:10px 16px 10px 42px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-full);color:var(--text-primary);font-size:14px;font-family:inherit;outline:none;" oninput="app.searchEntries(this.value)">
     </div>
     <div id="searchResults" style="display:none;"></div>
-    <!-- Weather Card -->
+
+    <!-- Weather -->
     <div class="explore-card" id="weatherCard">
       <div class="explore-card-header">天气</div>
-      <div class="weather-card-body" id="weatherBody">
-        <div class="weather-icon-wrap" id="weatherIcon"></div>
-        <div class="weather-info">
-          <div class="weather-city" id="weatherCity">--</div>
-          <div class="weather-temp" id="weatherTemp">--°C</div>
-          <div class="weather-desc" id="weatherDesc">加载中...</div>
-          <div class="weather-extra" id="weatherExtra"></div>
-        </div>
-      </div>
+      <div class="weather-card-body" id="weatherBody"><div class="weather-icon-wrap" id="weatherIcon"></div><div class="weather-info"><div class="weather-city" id="weatherCity">--</div><div class="weather-temp" id="weatherTemp">--°C</div><div class="weather-desc" id="weatherDesc">加载中...</div><div class="weather-extra" id="weatherExtra"></div></div></div>
       <div class="weather-error" id="weatherError" style="display:none;">天气信息暂不可用</div>
     </div>
 
+    <!-- Hot Mood -->
     <div class="explore-card">
-      <div class="explore-card-header">今日心情</div>
-      <div class="explore-card-body">
-        <div class="mood-stat-row">
-          <div class="mood-stat-emoji" id="todayMoodEmoji">😌</div>
-          <div class="mood-stat-info">
-            <div class="mood-stat-label" id="todayMoodLabel">今天还没有记录</div>
-            <div class="mood-stat-sub" id="todayMoodSub">记录今天的心情吧</div>
-          </div>
-        </div>
-      </div>
+      <div class="explore-card-header">今日热门心情</div>
+      <div class="explore-card-body"><div class="mood-stat-row"><div class="mood-stat-emoji" id="hotMoodEmoji">😊</div><div style="font-size:14px;font-weight:700;" id="hotMoodLabel">--</div><div style="font-size:12px;color:var(--text-muted);margin-left:auto;" id="hotMoodCount"></div></div></div>
     </div>
+
+    <!-- Who to follow -->
     <div class="explore-card">
-      <div class="explore-card-header">数据统计</div>
-      <div class="explore-card-body">
-        <div class="stat-grid">
-          <div class="stat-cell"><div class="stat-cell-num" id="rpStatTotal">0</div><div class="stat-cell-label">总日记</div></div>
-          <div class="stat-cell"><div class="stat-cell-num" id="rpStatMonth">0</div><div class="stat-cell-label">本月</div></div>
-          <div class="stat-cell"><div class="stat-cell-num" id="rpStatStreak">0</div><div class="stat-cell-label">连更</div></div>
-        </div>
-      </div>
+      <div class="explore-card-header">推荐关注</div>
+      <div class="explore-card-body" id="whoToFollow"></div>
     </div>
+
+    <!-- Mood Tags -->
     <div class="explore-card">
-      <div class="explore-card-header">心情日历</div>
-      <div class="explore-card-body">
-        <div class="mini-cal">
-          <div class="mini-cal-header">
-            <button class="mini-cal-nav" onclick="miniCal.prevMonth()">◂</button>
-            <span class="mini-cal-month" id="miniCalMonth"></span>
-            <button class="mini-cal-nav" onclick="miniCal.nextMonth()">▸</button>
-          </div>
-          <div class="mini-cal-days" id="miniCalGrid"></div>
-        </div>
-      </div>
+      <div class="explore-card-header">心情标签</div>
+      <div class="explore-card-body"><div class="tag-cloud" id="moodTagCloud"></div></div>
     </div>
-    <div class="explore-footer">
-      <div class="explore-links"><a href="#">服务条款</a><a href="#">隐私政策</a><a href="#">关于</a></div>
-      <div class="explore-copyright">© 2026 INK — 心情日记</div>
+
+    <!-- Footer -->
+    <div style="padding:0 4px 20px;">
+      <div style="display:flex;flex-wrap:wrap;gap:4px 12px;margin-bottom:8px;">
+        <a href="#" style="font-size:12px;color:var(--text-muted);text-decoration:none;">服务条款</a>
+        <a href="#" style="font-size:12px;color:var(--text-muted);text-decoration:none;">隐私政策</a>
+        <a href="#" style="font-size:12px;color:var(--text-muted);text-decoration:none;">关于</a>
+      </div>
+      <div style="font-size:12px;color:var(--text-muted);">© 2026 INK — 心情社区</div>
     </div>
   </aside>
 
 </div><!-- /app -->
+
+<!-- ====== LOGIN MODAL ====== -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-card">
+    <div class="login-logo">⌐</div>
+    <div class="login-title">INK 心情社区</div>
+    <div class="login-subtitle" id="loginSubtitle">登录你的账号</div>
+    <div class="login-tabs">
+      <button class="login-tab active" data-tab="login" onclick="authUI.switchTab('login')">登录</button>
+      <button class="login-tab" data-tab="register" onclick="authUI.switchTab('register')">注册</button>
+    </div>
+    <input type="text" class="login-input" id="loginUsername" placeholder="用户名" maxlength="20" autocomplete="off">
+    <input type="password" class="login-input" id="loginPassword" placeholder="密码（至少 4 位）" maxlength="64" autocomplete="off" onkeydown="if(event.key==='Enter')authUI.submit()">
+    <input type="password" class="login-input" id="loginPassword2" placeholder="确认密码" maxlength="64" style="display:none;" autocomplete="off" onkeydown="if(event.key==='Enter')authUI.submit()">
+    <div class="login-error" id="loginError"></div>
+    <button class="login-btn" id="loginBtn" onclick="authUI.submit()">登录</button>
+  </div>
+</div>
 
 <!-- Profile Edit Modal -->
 <div class="modal-overlay" id="modalOverlay">
@@ -645,23 +494,10 @@
     <div class="modal-title">编辑个人资料</div>
     <input class="modal-input" type="text" id="editName" placeholder="你的名字" maxlength="20">
     <input class="modal-input" type="text" id="editHandle" placeholder="@用户名" maxlength="30">
-    <textarea class="write-textarea" id="editBio" placeholder="写一段个人简介..." style="min-height:80px" maxlength="120"></textarea>
+    <textarea class="modal-input" id="editBio" placeholder="写一段个人简介..." style="min-height:80px;resize:vertical;"></textarea>
     <div class="modal-actions">
       <button class="btn-outline" onclick="app.closeProfileEdit()">取消</button>
       <button class="btn-post" onclick="app.saveProfile()">保存</button>
-    </div>
-  </div>
-</div>
-
-<!-- Change Password Modal -->
-<div class="modal-overlay" id="pwdModalOverlay">
-  <div class="modal">
-    <div class="modal-title">🔒 修改密码</div>
-    <input class="modal-input" type="password" id="newPassword" placeholder="新密码（至少 6 位）" maxlength="64" minlength="6" autocomplete="off">
-    <div class="login-error" id="pwdError"></div>
-    <div class="modal-actions">
-      <button class="btn-outline" onclick="app.closeChangePassword()">取消</button>
-      <button class="btn-post" onclick="app.confirmChangePassword()">确认修改</button>
     </div>
   </div>
 </div>
@@ -673,683 +509,484 @@
 
 <!-- Mobile Nav -->
 <nav class="mobile-nav">
-  <div class="mobile-nav-row">
-    <button class="mobile-nav-item active" data-route="home"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>日记</button>
-    <button class="mobile-nav-item" data-route="write"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>写日记</button>
-    <button class="mobile-nav-item" data-route="calendar"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>日历</button>
-    <button class="mobile-nav-item" data-route="profile"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>我的</button>
+  <div class="mobile-nav-row" id="mobileNavRow">
+    <button class="mobile-nav-item active" data-route="home">🏠<span style="font-size:10px;">首页</span></button>
+    <button class="mobile-nav-item" data-route="explore">🔍<span style="font-size:10px;">探索</span></button>
+    <button class="mobile-nav-item" data-route="write" id="mobileWrite">✏️<span style="font-size:10px;">写日记</span></button>
+    <button class="mobile-nav-item" data-route="calendar">🗓️<span style="font-size:10px;">日历</span></button>
+    <button class="mobile-nav-item" data-route="profile">👤<span style="font-size:10px;">我的</span></button>
   </div>
 </nav>
 
 <script>
-// ==================== SUPABASE CONFIG ====================
-// ⚠️ 替换为你的 Supabase 项目 URL 和 anon key
-// 在 https://app.supabase.com → Settings → API 中找到
-const SUPABASE_URL = 'https://syhbmxjhvyydybbdkdpk.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_qosKQvw00tPpmryba79c7Q_aG5MasLF';
-
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
 // ==================== MOODS ====================
 const MOODS = [
-  { key: 'happy', emoji: '😊', label: '开心' },
-  { key: 'calm', emoji: '😌', label: '平静' },
-  { key: 'excited', emoji: '🤩', label: '兴奋' },
-  { key: 'love', emoji: '🥰', label: '恋爱' },
-  { key: 'sad', emoji: '😢', label: '难过' },
-  { key: 'anxious', emoji: '😰', label: '焦虑' },
-  { key: 'angry', emoji: '😡', label: '生气' },
-  { key: 'tired', emoji: '😴', label: '疲惫' }
+  { key:'happy', emoji:'😊', label:'开心' }, { key:'calm', emoji:'😌', label:'平静' },
+  { key:'excited', emoji:'🤩', label:'兴奋' }, { key:'love', emoji:'🥰', label:'恋爱' },
+  { key:'sad', emoji:'😢', label:'难过' }, { key:'anxious', emoji:'😰', label:'焦虑' },
+  { key:'angry', emoji:'😡', label:'生气' }, { key:'tired', emoji:'😴', label:'疲惫' }
 ];
 const MOOD_MAP = Object.fromEntries(MOODS.map(m => [m.key, m]));
-const QUICK_MOODS = MOODS.slice(0, 5);
+const QM = MOODS.slice(0, 5);
 
-// ==================== AUTH HANDLER ====================
-const authHandler = (() => {
-  let mode = 'login'; // 'login' | 'register'
+// ==================== USER STORE (localStorage) ====================
+const UserStore = (() => {
+  const KEY = 'ink_users';
+  function getAll() { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; } }
+  function saveAll(users) { localStorage.setItem(KEY, JSON.stringify(users)); }
+  function findByUsername(username) { return getAll().find(u => u.username === username); }
+  function findById(id) { return getAll().find(u => u.id === id); }
 
+  async function hash(str) {
+    const data = new TextEncoder().encode(str);
+    const h = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(h)).map(b => b.toString(16).padStart(2,'0')).join('');
+  }
+
+  async function register(username, password, name) {
+    if (findByUsername(username)) return { error: '用户名已存在' };
+    if (password.length < 4) return { error: '密码至少 4 位' };
+    const user = { id:'user_'+Date.now(), username, passwordHash: await hash(password), name: name || username, handle: '@'+username, bio: '', following:[], createdAt: new Date().toLocaleDateString('zh-CN') };
+    const users = getAll(); users.push(user); saveAll(users);
+    return { user };
+  }
+
+  async function login(username, password) {
+    const user = findByUsername(username);
+    if (!user) return { error: '用户不存在' };
+    if (user.passwordHash !== await hash(password)) return { error: '密码错误' };
+    return { user };
+  }
+
+  function update(id, fields) { const users = getAll(); const idx = users.findIndex(u => u.id === id); if (idx < 0) return; Object.assign(users[idx], fields); saveAll(users); return users[idx]; }
+
+  function getFollowers(userId) { return getAll().filter(u => u.following && u.following.includes(userId)); }
+
+  return { getAll, findById, findByUsername, register, login, update, getFollowers, hash };
+})();
+
+// ==================== AUTH STORE ====================
+let currentUser = null;
+const authStore = {
+  init() {
+    const raw = sessionStorage.getItem('ink_user');
+    if (raw) { try { currentUser = JSON.parse(raw); } catch { currentUser = null; } }
+  },
+  async login(username, password) {
+    const r = await UserStore.login(username, password);
+    if (r.error) return r;
+    currentUser = r.user;
+    sessionStorage.setItem('ink_user', JSON.stringify(currentUser));
+    return {};
+  },
+  async register(username, password, name) {
+    const r = await UserStore.register(username, password, name);
+    if (r.error) return r;
+    currentUser = r.user;
+    sessionStorage.setItem('ink_user', JSON.stringify(currentUser));
+    return {};
+  },
+  logout() {
+    currentUser = null;
+    sessionStorage.removeItem('ink_user');
+    router._onChange();
+  },
+  refresh() {
+    if (currentUser) {
+      const fresh = UserStore.findById(currentUser.id);
+      if (fresh) { currentUser = fresh; sessionStorage.setItem('ink_user', JSON.stringify(currentUser)); }
+    }
+  }
+};
+
+// ==================== AUTH UI ====================
+const authUI = (() => {
+  let mode = 'login';
+  function showLogin(m = 'login') { mode = m; switchTab(m); document.getElementById('loginOverlay').classList.add('open'); }
+  function hideLogin() { document.getElementById('loginOverlay').classList.remove('open'); }
   function switchTab(tab) {
     mode = tab;
     document.querySelectorAll('.login-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
-    document.getElementById('loginName').style.display = tab === 'register' ? '' : 'none';
-    document.getElementById('loginBtn').textContent = tab === 'login' ? '登录' : '注册';
     document.getElementById('loginSubtitle').textContent = tab === 'login' ? '登录你的账号' : '创建一个新账号';
+    document.getElementById('loginBtn').textContent = tab === 'login' ? '登录' : '注册';
+    document.getElementById('loginPassword2').style.display = tab === 'register' ? '' : 'none';
     document.getElementById('loginError').textContent = '';
   }
-
-  function showOverlay() {
-    document.getElementById('loginOverlay').classList.remove('hidden');
-    document.getElementById('appContainer').classList.add('hidden');
-  }
-
-  function hideOverlay() {
-    document.getElementById('loginOverlay').classList.add('hidden');
-    document.getElementById('appContainer').classList.remove('hidden');
-  }
-
   async function submit() {
-    const email = document.getElementById('loginEmail').value.trim();
+    const username = document.getElementById('loginUsername').value.trim();
     const password = document.getElementById('loginPassword').value;
-    const name = document.getElementById('loginName').value.trim();
+    const password2 = document.getElementById('loginPassword2').value;
     const errEl = document.getElementById('loginError');
     const btn = document.getElementById('loginBtn');
-
-    errEl.textContent = '';
-    if (!email || !password) { errEl.textContent = '请填写邮箱和密码'; return; }
-    if (password.length < 6) { errEl.textContent = '密码至少需要 6 位字符'; return; }
-    if (mode === 'register' && !name) { errEl.textContent = '请填写你的名字'; return; }
-
-    btn.disabled = true;
-    btn.textContent = '...';
-
-    try {
-      if (mode === 'register') {
-        const { data, error } = await sb.auth.signUp({ email, password });
-        if (error) throw error;
-
-        // Update profile with name
-        if (data.user) {
-          await sb.from('profiles').upsert({ id: data.user.id, name, handle: '@' + name });
-        }
-        errEl.textContent = '注册成功！请查看邮箱确认链接（或已自动登录）';
-        btn.textContent = '已发送';
-        // If session is immediately available, proceed
-        if (data.session) {
-          hideOverlay();
-          app.init();
-        }
-      } else {
-        const { data, error } = await sb.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        if (data.session) {
-          hideOverlay();
-          app.init();
-        }
-      }
-    } catch (e) {
-      errEl.textContent = e.message || '操作失败，请重试';
-      btn.disabled = false;
-      btn.textContent = mode === 'login' ? '登录' : '注册';
-    }
+    if (!username || !password) { errEl.textContent = '请填写完整'; return; }
+    if (mode === 'register' && password !== password2) { errEl.textContent = '两次密码不一致'; return; }
+    btn.disabled = true; btn.textContent = '...';
+    let r;
+    if (mode === 'register') r = await authStore.register(username, password, username);
+    else r = await authStore.login(username, password);
+    if (r.error) { errEl.textContent = r.error; btn.disabled = false; btn.textContent = mode === 'login' ? '登录' : '注册'; return; }
+    hideLogin();
+    router._onChange();
   }
-
-  async function logout() {
-    if (!confirm('确定要退出登录吗？')) return;
-    await sb.auth.signOut();
-    document.getElementById('appContainer').classList.add('hidden');
-    document.getElementById('loginEmail').value = '';
-    document.getElementById('loginPassword').value = '';
-    showOverlay();
-  }
-
-  async function checkSession() {
-    const { data: { session } } = await sb.auth.getSession();
-    if (session) {
-      hideOverlay();
-      app.init();
-    } else {
-      showOverlay();
-    }
-  }
-
-  return { switchTab, submit, logout, checkSession };
+  return { showLogin, hideLogin, switchTab, submit };
 })();
 
-// ==================== WEATHER MODULE ====================
-const weatherWidget = (() => {
-  const CACHE_KEY = 'ink_weather_cache';
-  const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
-
-  // Custom SVG weather icons — minimal line art
-  const ICONS = {
-    sunny: `<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="18" cy="18" r="8"/>
-      <line x1="18" y1="2" x2="18" y2="6"/><line x1="18" y1="30" x2="18" y2="34"/>
-      <line x1="6" y1="18" x2="2" y2="18"/><line x1="34" y1="18" x2="30" y2="18"/>
-      <line x1="9.5" y1="9.5" x2="6.7" y2="6.7"/><line x1="29.3" y1="29.3" x2="26.5" y2="26.5"/>
-      <line x1="26.5" y1="9.5" x2="29.3" y2="6.7"/><line x1="6.7" y1="29.3" x2="9.5" y2="26.5"/>
-    </svg>`,
-
-    partlyCloudy: `<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="15" cy="14" r="6"/>
-      <line x1="15" y1="4" x2="15" y2="7"/><line x1="15" y1="21" x2="15" y2="24"/>
-      <line x1="5" y1="14" x2="3" y2="14"/><line x1="27" y1="14" x2="25" y2="14"/>
-      <line x1="8" y1="8" x2="5.5" y2="5.5"/><line x1="24.5" y1="22.5" x2="22" y2="20"/>
-      <path d="M10 22c-4 0-7 3-7 6s3 6 7 6h14c3.5 0 6-2.5 6-6s-2.5-6-6-6H10z"/>
-    </svg>`,
-
-    cloudy: `<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M8 22c-3.5 0-6 2.8-6 5.5S4.5 33 8 33h16c3 0 5.5-2.2 5.5-5.5S27 22 24 22c-.5-4-3.5-7-7.5-7-3.5 0-6.5 2.5-7.5 5.5"/>
-    </svg>`,
-
-    overcast: `<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M6 24c-3 0-5 2.5-5 5s2 5 5 5h20c3 0 5.5-2 5.5-5s-2.5-5-5.5-5H6z"/>
-      <path d="M10 19c-.5-3-3-5.5-6.5-5.5"/>
-      <path d="M24 19c.5-3 3-5.5 6-5.5"/>
-    </svg>`,
-
-    rain: `<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M10 20c-4 0-7 3-7 6s3 6 7 6h14c3.5 0 6-2.5 6-6s-2.5-6-6-6H10z"/>
-      <line x1="12" y1="28" x2="10" y2="34"/><line x1="18" y1="28" x2="16" y2="34"/>
-      <line x1="24" y1="28" x2="22" y2="34"/>
-      <line x1="15" y1="26" x2="13" y2="32"/><line x1="21" y1="26" x2="19" y2="32"/>
-    </svg>`,
-
-    thunder: `<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M10 18c-4 0-7 3-7 6s3 6 7 6h14c3.5 0 6-2.5 6-6s-2.5-6-6-6H10z"/>
-      <polygon points="20,12 14,22 18,22 16,32 24,20 19,20 22,12"/>
-    </svg>`,
-
-    snow: `<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M10 18c-4 0-7 3-7 6s3 6 7 6h14c3.5 0 6-2.5 6-6s-2.5-6-6-6H10z"/>
-      <circle cx="14" cy="27" r="1.2"/><circle cx="20" cy="29" r="1.2"/><circle cx="17" cy="32" r="1.2"/>
-      <circle cx="22" cy="27" r="1.2"/><circle cx="12" cy="31" r="1.2"/>
-    </svg>`,
-
-    fog: `<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <line x1="6" y1="14" x2="30" y2="14"/><line x1="8" y1="18" x2="28" y2="18"/>
-      <line x1="6" y1="22" x2="30" y2="22"/><line x1="8" y1="26" x2="28" y2="26"/>
-      <line x1="10" y1="30" x2="26" y2="30"/>
-    </svg>`,
-
-    default: `<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M8 22c-3.5 0-6 2.8-6 5.5S4.5 33 8 33h16c3 0 5.5-2.2 5.5-5.5S27 22 24 22c-.5-4-3.5-7-7.5-7-3.5 0-6.5 2.5-7.5 5.5"/>
-    </svg>`
-  };
-
-  function pickIcon(code) {
-    if (!code) return 'default';
-    const c = parseInt(code);
-    if (c === 113 || c === 116 || c === 122 || c === 395) return 'rain';
-    if (c === 119 || c === 176 || c === 263 || c === 266 || c === 293 || c === 296 || c === 299 || c === 302 || c === 305 || c === 308 || c === 311 || c === 314 || c === 353 || c === 356 || c === 359 || c === 386 || c === 389) return 'rain';
-    if (c === 179 || c === 182 || c === 185 || c === 227 || c === 230 || c === 317 || c === 320 || c === 323 || c === 326 || c === 329 || c === 332 || c === 335 || c === 338 || c === 350 || c === 362 || c === 365 || c === 368 || c === 371 || c === 374 || c === 377 || c === 392) return 'snow';
-    if (c === 200 || c === 386) return 'thunder';
-    if (c === 116 || c === 119) return 'partlyCloudy';
-    if (c >= 119 && c <= 122) return 'cloudy';
-    if (c === 143 || c === 248 || c === 260) return 'fog';
-    if (c === 113 || c === 116) return 'sunny';
-    return 'default';
+// ==================== INDEXED DB ====================
+const DB = (() => {
+  const DB_NAME = 'InkCommunityDB'; const DB_VER = 2; const STORE = 'entries';
+  let db = null;
+  async function open() {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(DB_NAME, DB_VER);
+      req.onupgradeneeded = (e) => {
+        const d = e.target.result;
+        if (!d.objectStoreNames.contains(STORE)) { const s = d.createObjectStore(STORE, { keyPath:'id' }); s.createIndex('date','date',{unique:false}); s.createIndex('userId','userId',{unique:false}); s.createIndex('isPublic','isPublic',{unique:false}); }
+      };
+      req.onsuccess = (e) => { db = e.target.result; resolve(db); };
+      req.onerror = () => reject(req.error);
+    });
   }
-
-  function getCached() {
-    try {
-      const raw = localStorage.getItem(CACHE_KEY);
-      if (!raw) return null;
-      const data = JSON.parse(raw);
-      if (Date.now() - data.ts > CACHE_DURATION) return null;
-      return data;
-    } catch { return null; }
-  }
-
-  function setCache(data) {
-    try {
-      localStorage.setItem(CACHE_KEY, JSON.stringify({ ...data, ts: Date.now() }));
-    } catch {}
-  }
-
-  async function fetchCity() {
-    const resp = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(5000) });
-    if (!resp.ok) throw new Error('IP lookup failed');
-    const data = await resp.json();
-    return { city: data.city || data.region || '未知城市', country: data.country_code || '' };
-  }
-
-  async function fetchWeather(city) {
-    const resp = await fetch(`https://api.wttr.in/${encodeURIComponent(city)}?format=j1`, { signal: AbortSignal.timeout(8000) });
-    if (!resp.ok) throw new Error('Weather fetch failed');
-    const data = await resp.json();
-    const cur = data.current_condition[0];
-    return {
-      city: data.nearest_area?.[0]?.areaName?.[0]?.value || city,
-      temp: cur.temp_C,
-      feelsLike: cur.FeelsLikeC,
-      humidity: cur.humidity,
-      desc: cur.weatherDesc?.[0]?.value || cur.lang_zh?.[0]?.value || '未知',
-      code: cur.weatherCode,
-      windSpeed: cur.windspeedKmph
-    };
-  }
-
-  function render(data) {
-    document.getElementById('weatherError').style.display = 'none';
-    document.getElementById('weatherBody').style.display = '';
-    document.getElementById('weatherIcon').innerHTML = ICONS[pickIcon(data.code)] || ICONS.default;
-    document.getElementById('weatherCity').textContent = data.city || '--';
-    document.getElementById('weatherTemp').textContent = `${data.temp}°C`;
-    document.getElementById('weatherDesc').textContent = data.desc || '';
-    document.getElementById('weatherExtra').textContent = `体感 ${data.feelsLike}°C · 湿度 ${data.humidity}%`;
-  }
-
-  function renderError(msg) {
-    document.getElementById('weatherBody').style.display = 'none';
-    document.getElementById('weatherError').style.display = '';
-    document.getElementById('weatherError').textContent = msg || '天气信息暂不可用';
-  }
-
-  async function update() {
-    // Try cache first
-    const cached = getCached();
-    if (cached) { render(cached); return; }
-
-    try {
-      const loc = await fetchCity();
-      const weather = await fetchWeather(loc.city);
-      setCache(weather);
-      render(weather);
-    } catch (e) {
-      // Fallback to stale cache
-      const stale = getCached();
-      if (stale) { render(stale); return; }
-      renderError('天气信息暂不可用');
-    }
-  }
-
-  return { update };
+  function store(mode) { return db.transaction(STORE, mode).objectStore(STORE); }
+  function p(req) { return new Promise((res, rej) => { req.onsuccess = () => res(req.result); req.onerror = () => rej(req.error); }); }
+  async function add(entry) { return p(store('readwrite').add(entry)); }
+  async function put(entry) { return p(store('readwrite').put(entry)); }
+  async function getAll() { return p(store().getAll()); }
+  async function getByDate(date) { return p(store().index('date').getAll(date)); }
+  async function remove(id) { return p(store('readwrite').delete(id)); }
+  async function getAllByDate() { const all = await getAll(); const m = {}; for (const e of all) { if (!m[e.date]) m[e.date] = []; m[e.date].push(e); } return m; }
+  return { open, add, put, getAll, getByDate, remove, getAllByDate };
 })();
 
 // ==================== IMAGE HANDLER ====================
-const imageHandler = (() => {
-  let images = [];
-  function reset() { images = []; }
-  function getImages() { return [...images]; }
-  function setImages(imgs) { images = [...imgs]; }
-
-  function compressImage(file) {
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const img = new Image();
-        img.onload = () => {
-          const maxW = 800;
-          let w = img.width, h = img.height;
-          if (w > maxW) { h = h * maxW / w; w = maxW; }
-          const canvas = document.createElement('canvas');
-          canvas.width = w; canvas.height = h;
-          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-          resolve(canvas.toDataURL('image/jpeg', 0.8));
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
+const imgHandler = (() => {
+  let imgs = [];
+  function reset() { imgs = []; }
+  function get() { return [...imgs]; }
+  function set(arr) { imgs = [...arr]; }
+  function compress(file) {
+    return new Promise(res => {
+      const r = new FileReader();
+      r.onload = (e) => { const img = new Image(); img.onload = () => { const maxW = 800; let w = img.width, h = img.height; if (w > maxW) { h = h * maxW / w; w = maxW; } const c = document.createElement('canvas'); c.width = w; c.height = h; c.getContext('2d').drawImage(img, 0, 0, w, h); res(c.toDataURL('image/jpeg', 0.8)); }; img.src = e.target.result; };
+      r.readAsDataURL(file);
     });
   }
-
-  async function addImages(input) {
-    if (images.length >= 4) { app.toast('最多添加 4 张图片'); return; }
-    for (const file of input.files) {
-      if (images.length >= 4) break;
-      images.push(await compressImage(file));
-    }
-    renderPreviews();
-    input.value = '';
-  }
-
-  function removeImage(idx) { images.splice(idx, 1); renderPreviews(); }
-
-  function renderPreviews() {
+  async function add(input) { if (imgs.length >= 4) { app.toast('最多4张'); return; } for (const f of input.files) { if (imgs.length >= 4) break; imgs.push(await compress(f)); } render(); input.value = ''; }
+  function remove(i) { imgs.splice(i, 1); render(); }
+  function render() {
     const area = document.getElementById('imageArea');
-    area.innerHTML = images.map((img, i) => `
-      <div class="image-preview"><img src="${img}" alt=""><button class="remove-img" onclick="imageHandler.removeImage(${i})">&times;</button></div>
-    `).join('') + (images.length < 4 ? `
-      <div class="image-upload-btn" onclick="document.getElementById('imageInput').click()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>添加图片
-      </div>` : '');
+    area.innerHTML = imgs.map((img, i) => `<div style="width:96px;height:96px;border-radius:var(--radius);position:relative;overflow:hidden;border:1px solid var(--border);"><img src="${img}" style="width:100%;height:100%;object-fit:cover;"><button style="position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,0.6);color:#fff;border:none;cursor:pointer;font-size:14px;" onclick="imgHandler.remove(${i})">&times;</button></div>`).join('') + (imgs.length < 4 ? `<div style="width:96px;height:96px;border-radius:var(--radius);border:2px dashed var(--border);background:var(--bg-card);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;color:var(--text-muted);font-size:12px;" onclick="document.getElementById('imageInput').click()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>添加图片</div>` : '');
   }
-
-  return { reset, getImages, setImages, addImages, removeImage, renderPreviews, compressImage };
+  return { reset, get, set, add, remove, render, compress };
 })();
 
-// Quick image handler
-const quickImageHandler = (() => {
-  let images = [];
-  function getImages() { return [...images]; }
-  function reset() { images = []; }
-
-  async function addImages(input) {
-    if (images.length >= 2) { app.toast('快捷发布最多添加 2 张图片'); return; }
-    for (const file of input.files) {
-      if (images.length >= 2) break;
-      images.push(await imageHandler.compressImage(file));
-    }
-    renderPreviews();
-    input.value = '';
+const quickImg = (() => {
+  let imgs = [];
+  function get() { return [...imgs]; }
+  function reset() { imgs = []; }
+  async function add(input) { if (imgs.length >= 2) { app.toast('最多2张'); return; } for (const f of input.files) { if (imgs.length >= 2) break; imgs.push(await imgHandler.compress(f)); } render(); input.value = ''; }
+  function remove(i) { imgs.splice(i, 1); render(); }
+  function render() {
+    document.getElementById('quickImagePreviews').innerHTML = imgs.map((img, i) => `<div style="width:64px;height:64px;border-radius:var(--radius);position:relative;overflow:hidden;border:1px solid var(--border);"><img src="${img}" style="width:100%;height:100%;object-fit:cover;"><button style="position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,0.6);color:#fff;border:none;cursor:pointer;font-size:12px;" onclick="quickImg.remove(${i})">&times;</button></div>`).join('');
   }
+  return { get, reset, add, remove, render };
+})();
 
-  function renderPreviews() {
-    const area = document.getElementById('quickImagePreviews');
-    area.innerHTML = images.map((img, i) => `
-      <div class="image-preview" style="width:64px;height:64px;"><img src="${img}" alt=""><button class="remove-img" onclick="quickImageHandler.removeImage(${i})">&times;</button></div>
-    `).join('');
-  }
-
-  function removeImage(idx) { images.splice(idx, 1); renderPreviews(); }
-  return { getImages, reset, addImages, removeImage, renderPreviews };
+// ==================== WEATHER ====================
+const weatherWidget = (() => {
+  const CK = 'ink_weather'; const CD = 30 * 60 * 1000;
+  const ICONS = {
+    sunny: `<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="18" r="8"/><line x1="18" y1="2" x2="18" y2="6"/><line x1="18" y1="30" x2="18" y2="34"/><line x1="6" y1="18" x2="2" y2="18"/><line x1="34" y1="18" x2="30" y2="18"/><line x1="9.5" y1="9.5" x2="6.7" y2="6.7"/><line x1="29.3" y1="29.3" x2="26.5" y2="26.5"/><line x1="26.5" y1="9.5" x2="29.3" y2="6.7"/><line x1="6.7" y1="29.3" x2="9.5" y2="26.5"/></svg>`,
+    partlyCloudy: `<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="15" cy="14" r="6"/><line x1="15" y1="4" x2="15" y2="7"/><line x1="15" y1="21" x2="15" y2="24"/><line x1="5" y1="14" x2="3" y2="14"/><line x1="27" y1="14" x2="25" y2="14"/><line x1="8" y1="8" x2="5.5" y2="5.5"/><line x1="24.5" y1="22.5" x2="22" y2="20"/><path d="M10 22c-4 0-7 3-7 6s3 6 7 6h14c3.5 0 6-2.5 6-6s-2.5-6-6-6H10z"/></svg>`,
+    cloudy: `<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22c-3.5 0-6 2.8-6 5.5S4.5 33 8 33h16c3 0 5.5-2.2 5.5-5.5S27 22 24 22c-.5-4-3.5-7-7.5-7-3.5 0-6.5 2.5-7.5 5.5"/></svg>`,
+    rain: `<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 20c-4 0-7 3-7 6s3 6 7 6h14c3.5 0 6-2.5 6-6s-2.5-6-6-6H10z"/><line x1="12" y1="28" x2="10" y2="34"/><line x1="18" y1="28" x2="16" y2="34"/><line x1="24" y1="28" x2="22" y2="34"/><line x1="15" y1="26" x2="13" y2="32"/><line x1="21" y1="26" x2="19" y2="32"/></svg>`,
+    thunder: `<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 18c-4 0-7 3-7 6s3 6 7 6h14c3.5 0 6-2.5 6-6s-2.5-6-6-6H10z"/><polygon points="20,12 14,22 18,22 16,32 24,20 19,20 22,12"/></svg>`,
+    snow: `<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 18c-4 0-7 3-7 6s3 6 7 6h14c3.5 0 6-2.5 6-6s-2.5-6-6-6H10z"/><circle cx="14" cy="27" r="1.2"/><circle cx="20" cy="29" r="1.2"/><circle cx="17" cy="32" r="1.2"/><circle cx="22" cy="27" r="1.2"/><circle cx="12" cy="31" r="1.2"/></svg>`,
+    fog: `<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="14" x2="30" y2="14"/><line x1="8" y1="18" x2="28" y2="18"/><line x1="6" y1="22" x2="30" y2="22"/><line x1="8" y1="26" x2="28" y2="26"/><line x1="10" y1="30" x2="26" y2="30"/></svg>`,
+    default: `<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22c-3.5 0-6 2.8-6 5.5S4.5 33 8 33h16c3 0 5.5-2.2 5.5-5.5S27 22 24 22c-.5-4-3.5-7-7.5-7-3.5 0-6.5 2.5-7.5 5.5"/></svg>`
+  };
+  function pickIcon(code) { if (!code) return 'default'; const c = parseInt(code); if ([113,116,122,176,263,266,293,296,299,302,305,308,311,314,353,356,359,386,389,395].includes(c)) return 'rain'; if ([179,182,185,227,230,317,320,323,326,329,332,335,338,350,362,365,368,371,374,377,392].includes(c)) return 'snow'; if ([200,386].includes(c)) return 'thunder'; if ([116,119].includes(c)) return 'partlyCloudy'; if (c>=119&&c<=122) return 'cloudy'; if ([143,248,260].includes(c)) return 'fog'; return 'default'; }
+  function getCached() { try { const d = JSON.parse(localStorage.getItem(CK)); if (d && Date.now()-d.ts<CD) return d; } catch {} return null; }
+  function setCache(d) { try { localStorage.setItem(CK, JSON.stringify({...d, ts:Date.now()})); } catch {} }
+  async function fetchCity() { const r = await fetch('https://ipapi.co/json/',{signal:AbortSignal.timeout(5000)}); if(!r.ok) throw new Error(); const d = await r.json(); return { city:d.city||d.region||'未知', country:d.country_code||'' }; }
+  async function fetchWeather(city) { const r = await fetch(`https://api.wttr.in/${encodeURIComponent(city)}?format=j1`,{signal:AbortSignal.timeout(8000)}); if(!r.ok) throw new Error(); const d = await r.json(); const cur = d.current_condition[0]; return { city:d.nearest_area?.[0]?.areaName?.[0]?.value||city, temp:cur.temp_C, feelsLike:cur.FeelsLikeC, humidity:cur.humidity, desc:cur.weatherDesc?.[0]?.value||'未知', code:cur.weatherCode }; }
+  function render(d) { document.getElementById('weatherError').style.display='none'; document.getElementById('weatherBody').style.display=''; document.getElementById('weatherIcon').innerHTML=ICONS[pickIcon(d.code)]||ICONS.default; document.getElementById('weatherCity').textContent=d.city||'--'; document.getElementById('weatherTemp').textContent=`${d.temp}°C`; document.getElementById('weatherDesc').textContent=d.desc||''; document.getElementById('weatherExtra').textContent=`体感 ${d.feelsLike}°C · 湿度 ${d.humidity}%`; }
+  function renderError() { document.getElementById('weatherBody').style.display='none'; document.getElementById('weatherError').style.display=''; }
+  async function update() { const c = getCached(); if (c) { render(c); return; } try { const loc = await fetchCity(); const w = await fetchWeather(loc.city); setCache(w); render(w); } catch { const stale = getCached(); if (stale) { render(stale); return; } renderError(); } }
+  return { update };
 })();
 
 // ==================== ROUTER ====================
 const router = {
   current: 'home',
-
   navigate(route) { location.hash = route; },
-
   async _onChange() {
     const route = (location.hash || '#home').replace('#', '') || 'home';
     this.current = route;
-
     document.querySelectorAll('.feed .view').forEach(v => v.classList.remove('active'));
-    const viewEl = document.getElementById('view-' + route);
-    if (viewEl) viewEl.classList.add('active');
+    const ve = document.getElementById('view-' + route);
+    if (ve) ve.classList.add('active');
 
     document.querySelectorAll('.sidebar .nav-item').forEach(el => el.classList.toggle('active', el.dataset.route === route));
     document.querySelectorAll('.mobile-nav-item').forEach(el => el.classList.toggle('active', el.dataset.route === route));
 
-    const explore = document.getElementById('explorePanel');
-    explore.style.display = (route === 'write' || route === 'calendar') ? 'none' : '';
+    const ep = document.getElementById('explorePanel');
+    ep.style.display = (route === 'write') ? 'none' : '';
 
-    if (route === 'home') { await homeView.render(); await updateRightPanel(); weatherWidget.update(); }
+    // Auth-gated routes
+    const authRoutes = ['write'];
+    if (authRoutes.includes(route) && !currentUser) {
+      authUI.showLogin(); router.navigate('home'); return;
+    }
+
+    if (route === 'home') { await homeView.render(); weatherWidget.update(); }
+    if (route === 'explore') exploreView.render();
     if (route === 'write') writeView.render();
-    if (route === 'calendar') calendarView.render();
-    if (route === 'profile') profileView.render();
+    if (route === 'calendar') await calView.render();
+    if (route === 'profile') { const uid = new URLSearchParams(location.hash.split('?')[1]||'').get('user'); await profileView.render(uid); }
 
+    updateUIState();
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    updateSidebarUser();
   }
 };
-
 window.addEventListener('hashchange', () => router._onChange());
 
-async function updateSidebarUser() {
-  const { data: { user } } = await sb.auth.getUser();
-  if (!user) return;
-  const { data: profile } = await sb.from('profiles').select('*').eq('id', user.id).single();
-  const name = profile?.name || user.email?.split('@')[0] || '?';
-  const handle = profile?.handle || '@' + name;
-  document.getElementById('sidebarAvatar').textContent = name.charAt(0).toUpperCase();
-  document.getElementById('sidebarName').textContent = name;
-  document.getElementById('sidebarHandle').textContent = handle;
-  document.getElementById('composeAvatar').textContent = name.charAt(0).toUpperCase();
+function updateUIState() {
+  const loggedIn = !!currentUser;
+  document.getElementById('guestBanner').style.display = loggedIn ? 'none' : '';
+  document.getElementById('homeCompose').style.display = loggedIn ? '' : 'none';
+  document.getElementById('navWriteLock').style.display = loggedIn ? 'none' : '';
+  document.getElementById('sidebarLogout').style.display = loggedIn ? '' : 'none';
+  document.getElementById('mobileWrite').style.display = loggedIn ? '' : 'none';
+
+  // Sidebar user card
+  const avatar = document.getElementById('sidebarAvatar');
+  const name = document.getElementById('sidebarName');
+  const handle = document.getElementById('sidebarHandle');
+  if (loggedIn) {
+    avatar.textContent = (currentUser.name||currentUser.username).charAt(0).toUpperCase();
+    avatar.style.background = 'var(--gradient-story)';
+    name.textContent = currentUser.name || currentUser.username;
+    handle.textContent = currentUser.handle || '@'+currentUser.username;
+    handle.style.cursor = 'default';
+  } else {
+    avatar.textContent = '?'; avatar.style.background = 'var(--bg-elevated)';
+    name.textContent = '未登录'; handle.textContent = '点击登录'; handle.style.cursor = 'pointer';
+  }
+
+  // Compose avatar
+  const ca = document.getElementById('composeAvatar');
+  if (ca && loggedIn) { ca.textContent = (currentUser.name||currentUser.username).charAt(0).toUpperCase(); }
+
+  // Right panel
+  updateRightPanel();
 }
 
 // ==================== HOME VIEW ====================
 const homeView = {
   async render() {
-    const { data: entries } = await sb.from('diary_entries').select('*').order('created_at', { ascending: false });
+    const all = await DB.getAll();
+    const publicEntries = all.filter(e => e.isPublic !== false).sort((a,b) => b.createdAt - a.createdAt);
     const list = document.getElementById('diaryPosts');
-    const empty = document.getElementById('emptyHome');
+    if (publicEntries.length === 0) { list.innerHTML = ''; return; }
+    list.innerHTML = publicEntries.map((e, i) => this.cardHTML(e, i)).join('');
 
-    if (!entries || entries.length === 0) {
-      list.innerHTML = '';
-      empty.style.display = 'flex';
-    } else {
-      empty.style.display = 'none';
-      list.innerHTML = entries.map((e, i) => {
-        const mood = MOOD_MAP[e.mood_key] || MOODS[0];
-        const d = new Date(e.created_at);
-        const now = new Date();
-        const diffMs = now - d;
-        const diffHr = Math.floor(diffMs / 3600000);
-        const diffMin = Math.floor(diffMs / 60000);
-        let timeAgo = diffMin < 1 ? '刚刚' : diffMin < 60 ? `${diffMin}分钟前` : diffHr < 24 ? `${diffHr}小时前` : `${Math.floor(diffHr / 24)}天前`;
-
-        const images = e.images || [];
-        const imagesHtml = images.length ? `
-          <div class="post-media"><div class="post-media-grid cols-${Math.min(images.length, 2)}">
-            ${images.map(img => `<div class="media-item"><img src="${img}" alt="" onclick="event.stopPropagation();app.openLightbox('${img.replace(/'/g, "\\'")}')"></div>`).join('')}
-          </div></div>` : '';
-
-        return `<article class="post" style="animation-delay:${i*0.04}s" onclick="router.navigate('write');setTimeout(()=>app.editEntry(${e.id}),50)">
-          <div class="post-header">
-            <div class="post-avatar">${mood.emoji}</div>
-            <div class="post-info">
-              <div class="post-name-row"><span class="post-name">${mood.label}</span>${e.title ? `<span class="post-handle">· ${app.escHtml(e.title)}</span>` : ''}</div>
-              <span class="post-time">${timeAgo}</span>
-            </div>
-            <button class="post-more" onclick="event.stopPropagation();app.deleteEntry(${e.id})" title="删除"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
-          </div>
-          ${e.content ? `<div class="post-text">${app.escHtml(e.content).substring(0, 280)}${e.content.length > 280 ? '...' : ''}</div>` : ''}
-          ${imagesHtml}
-          <div class="post-stats">
-            <button class="stat-btn edit" onclick="event.stopPropagation();router.navigate('write');setTimeout(()=>app.editEntry(${e.id}),50)">✏️ 编辑</button>
-            <button class="stat-btn delete" onclick="event.stopPropagation();app.deleteEntry(${e.id})">🗑️ 删除</button>
-          </div>
-        </article>`;
-      }).join('');
-    }
-
-    this.renderMoodStories(entries || []);
-    const picker = document.getElementById('quickMoods');
-    const selected = picker.dataset.selected || 'calm';
-    picker.innerHTML = QUICK_MOODS.map(m => `<button class="compose-mood-btn${m.key===selected?' selected':''}" data-mood="${m.key}" onclick="app.selectQuickMood(this)" title="${m.label}">${m.emoji}</button>`).join('');
+    // Quick mood picker
+    const sel = document.getElementById('quickMoods').dataset.selected || 'happy';
+    document.getElementById('quickMoods').innerHTML = QM.map(m => `<button class="compose-mood-btn${m.key===sel?' selected':''}" data-mood="${m.key}" onclick="app.selectQuickMood(this)" title="${m.label}">${m.emoji}</button>`).join('');
   },
 
-  renderMoodStories(entries) {
-    const row = document.getElementById('moodStories');
-    const today = new Date();
-    const entryMap = {};
-    for (const e of entries) { if (!entryMap[e.date]) entryMap[e.date] = e; }
+  cardHTML(e, i, showUser = true) {
+    const user = UserStore.findById(e.userId) || { name:'未知', handle:'@unknown' };
+    const mood = MOOD_MAP[e.mood_key] || MOODS[0];
+    const d = new Date(e.createdAt); const now = new Date();
+    const diffHr = Math.floor((now - d) / 3600000); const diffMin = Math.floor((now - d) / 60000);
+    const timeAgo = diffMin < 1 ? '刚刚' : diffMin < 60 ? `${diffMin}分钟前` : diffHr < 24 ? `${diffHr}小时前` : `${Math.floor(diffHr/24)}天前`;
+    const likes = e.likes || []; const comments = e.comments || [];
+    const liked = currentUser && likes.includes(currentUser.id);
+    const avatarColor = 'background:' + (user.id ? 'linear-gradient(135deg,'+['#F0A89A','#E8927C','#D4A574','#C9A87C','#7CBF8A'][(user.id.charCodeAt(0)||0)%5]+','+['#E8927C','#D4A574','#C9A87C','#D4816F','#A8C8A0'][(user.id.charCodeAt(0)||0)%5]+')' : 'var(--bg-elevated)');
 
-    let html = '';
-    for (let i = 5; i >= 0; i--) {
-      const d = new Date(today); d.setDate(d.getDate() - i);
-      const dateStr = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-      const entry = entryMap[dateStr];
-      const mood = entry ? MOOD_MAP[entry.mood_key] : null;
-      const dayLabel = i === 0 ? '今天' : i === 1 ? '昨天' : ['日','一','二','三','四','五','六'][d.getDay()];
-      html += `<div class="story" ${mood ? `onclick="router.navigate('write');setTimeout(()=>app.editEntry(${entry.id}),50)"` : `onclick="app.quickMoodForDate('${dateStr}')"`}>
-        <div class="story-ring-wrapper"><div class="story-ring ${i===0?'today-ring':mood?'has-mood':'no-mood'}"><div class="story-placeholder" style="${mood?'':'font-size:20px;'}">${mood?mood.emoji:'+'}</div></div></div>
-        <span class="story-label">${dayLabel}</span></div>`;
-    }
-    row.innerHTML = html;
+    const imgs = e.images || [];
+    const imgHTML = imgs.length ? `<div class="post-media"><div class="post-media-grid cols-${Math.min(imgs.length,2)}">${imgs.map(img => `<div class="media-item"><img src="${img.replace(/'/g,"\\'")}" alt="" onclick="event.stopPropagation();app.openLightbox('${img.replace(/'/g,"\\'")}')"></div>`).join('')}</div></div>` : '';
+
+    return `<article class="post" style="animation-delay:${i*0.03}s">
+      <div class="post-header">
+        <div class="post-avatar" style="${avatarColor};cursor:pointer;" onclick="router.navigate('profile?user=${e.userId}')">${(user.name||user.username||'?').charAt(0).toUpperCase()}</div>
+        <div class="post-info">
+          <div class="post-name-row">
+            <span class="post-name" onclick="router.navigate('profile?user=${e.userId}')">${app.esc(user.name||user.username||'未知')}</span>
+            <span class="post-handle">${user.handle||'@unknown'}</span>
+          </div>
+          <span class="post-time">${mood.emoji} ${mood.label} · ${timeAgo}</span>
+        </div>
+      </div>
+      ${e.title ? `<div style="font-weight:700;font-size:15px;margin-bottom:6px;">${app.esc(e.title)}</div>` : ''}
+      ${e.content ? `<div class="post-text">${app.esc(e.content).substring(0,300)}${e.content.length>300?'...':''}</div>` : ''}
+      ${imgHTML}
+      <div class="post-stats">
+        <button class="stat-btn like${liked?' liked':''}" onclick="app.toggleLike(${e.id})">${liked ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>' : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>'} ${likes.length}</button>
+        <button class="stat-btn comment" onclick="app.toggleComments(${e.id})">💬 ${comments.length}</button>
+      </div>
+      <div class="comments-section" id="comments-${e.id}" style="display:none;">
+        ${comments.map(c => { const cu = UserStore.findById(c.userId)||{name:'?'}; return `<div class="comment-item"><div class="comment-avatar" style="background:linear-gradient(135deg,#F0A89A,#E8927C);">${(cu.name||'?').charAt(0)}</div><div class="comment-body"><span class="comment-user">${app.esc(cu.name||'?')}</span><span class="comment-text">${app.esc(c.content)}</span><div class="comment-time">${new Date(c.createdAt).toLocaleString('zh-CN')}</div></div></div>`; }).join('')}
+        <div class="comment-input-row">
+          <input class="comment-input" id="commentInput-${e.id}" placeholder="写评论..." onkeydown="if(event.key==='Enter')app.addComment(${e.id})">
+          <button class="btn-post" style="padding:6px 14px;font-size:12px;" onclick="app.addComment(${e.id})">发送</button>
+        </div>
+      </div>
+    </article>`;
   }
+};
+
+// ==================== EXPLORE VIEW ====================
+const exploreView = {
+  currentTag: null,
+  render() {
+    document.getElementById('exploreTags').innerHTML = `<span class="tag-pill${!this.currentTag?' active':''}" onclick="exploreView.filter(null)">全部</span>` + MOODS.map(m => `<span class="tag-pill${this.currentTag===m.key?' active':''}" onclick="exploreView.filter('${m.key}')">${m.emoji} ${m.label}</span>`).join('');
+    this.showEntries();
+  },
+  async showEntries() {
+    const all = (await DB.getAll()).filter(e => e.isPublic !== false).sort((a,b) => b.createdAt - a.createdAt);
+    const filtered = this.currentTag ? all.filter(e => e.mood_key === this.currentTag) : all;
+    const list = document.getElementById('explorePosts');
+    const empty = document.getElementById('exploreEmpty');
+    if (filtered.length === 0) { list.innerHTML = ''; empty.style.display = 'flex'; return; }
+    empty.style.display = 'none';
+    list.innerHTML = filtered.map((e, i) => homeView.cardHTML(e, i)).join('');
+  },
+  filter(tag) { this.currentTag = tag; this.render(); }
 };
 
 // ==================== WRITE VIEW ====================
 const writeView = {
   render() {
     const editId = document.getElementById('editId').value;
-    document.getElementById('writeTitle').textContent = editId ? '编辑日记' : '新日记';
-    const selectedMood = document.querySelector('.mood-btn.selected');
-    const currentKey = selectedMood ? selectedMood.dataset.mood : 'happy';
-    document.getElementById('moodPicker').innerHTML = MOODS.map(m => `<button class="mood-btn${m.key===currentKey?' selected':''}" data-mood="${m.key}" onclick="writeView.selectMood(this)"><span class="mood-emoji">${m.emoji}</span><span class="mood-label">${m.label}</span></button>`).join('');
-    if (!editId) {
-      document.getElementById('diaryTitle').value = '';
-      document.getElementById('diaryContent').value = '';
-      document.getElementById('charCount').textContent = '0 字';
-      imageHandler.reset(); imageHandler.renderPreviews();
-    }
+    const sel = document.querySelector('.mood-btn.selected');
+    const ck = sel ? sel.dataset.mood : 'happy';
+    document.getElementById('moodPicker').innerHTML = MOODS.map(m => `<button class="mood-btn${m.key===ck?' selected':''}" style="width:54px;height:54px;border-radius:var(--radius);border:2px solid ${m.key===ck?'var(--accent-blue)':'var(--border)'};background:var(--bg-card);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:all var(--transition);" data-mood="${m.key}" onclick="writeView.selectMood(this)"><span style="font-size:22px;">${m.emoji}</span><span style="font-size:10px;color:var(--text-muted);">${m.label}</span></button>`).join('');
+    if (!editId) { document.getElementById('diaryTitle').value = ''; document.getElementById('diaryContent').value = ''; document.getElementById('charCount').textContent = '0 字'; imgHandler.reset(); imgHandler.render(); }
+    document.getElementById('writePrivacyToggle').textContent = document.getElementById('editId').value ? (document.getElementById('editId').dataset.public==='false'?'🔒 私密':'🌐 公开') : '🌐 公开';
   },
-  selectMood(btn) { document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected')); btn.classList.add('selected'); }
+  selectMood(btn) { document.querySelectorAll('.mood-btn').forEach(b => { b.classList.remove('selected'); b.style.borderColor = 'var(--border)'; }); btn.classList.add('selected'); btn.style.borderColor = 'var(--accent-blue)'; }
 };
 
 // ==================== CALENDAR VIEW ====================
-const calendarView = (() => {
-  let year, month, selectedDate = '';
-  function init() { const now = new Date(); year = now.getFullYear(); month = now.getMonth(); }
-  function goToday() { const now = new Date(); year = now.getFullYear(); month = now.getMonth(); selectedDate = ''; render(); }
-  function prevMonth() { month--; if (month < 0) { month = 11; year--; } selectedDate = ''; render(); }
-  function nextMonth() { month++; if (month > 11) { month = 0; year++; } selectedDate = ''; render(); }
+const calView = (() => {
+  let year, month, selDate = '';
+  function init() { const n = new Date(); year = n.getFullYear(); month = n.getMonth(); }
+  function goToday() { const n = new Date(); year = n.getFullYear(); month = n.getMonth(); selDate = ''; render(); }
+  function prevMonth() { month--; if (month < 0) { month = 11; year--; } selDate = ''; render(); }
+  function nextMonth() { month++; if (month > 11) { month = 0; year++; } selDate = ''; render(); }
 
   async function render() {
     document.getElementById('calMonthTitle').textContent = `${year}年 ${month + 1}月`;
-    const today = new Date();
-    const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
-
-    const { data: entries } = await sb.from('diary_entries').select('date, mood_key').gte('date', `${year}-${String(month+1).padStart(2,'0')}-01`).lte('date', `${year}-${String(month+1).padStart(2,'0')}-31`);
-    const entryMap = {};
-    for (const e of (entries || [])) { if (!entryMap[e.date]) entryMap[e.date] = e; }
-
-    const firstDay = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    let html = ['日','一','二','三','四','五','六'].map(l => `<div class="cal-day-label">${l}</div>`).join('');
-
-    const prevDays = new Date(year, month, 0).getDate();
-    for (let i = firstDay - 1; i >= 0; i--) {
-      html += `<div class="cal-day other-month"><span class="day-num">${prevDays - i}</span></div>`;
+    const today = new Date(); const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+    const all = await DB.getAll(); const entryMap = {}; for (const e of all) { if (!entryMap[e.date]) entryMap[e.date] = []; entryMap[e.date].push(e); }
+    const firstDay = new Date(year, month, 1).getDay(); const daysIn = new Date(year, month+1, 0).getDate();
+    let html = ['日','一','二','三','四','五','六'].map(l => `<div style="text-align:center;font-size:12px;font-weight:600;color:var(--text-muted);padding:8px 0;">${l}</div>`).join('');
+    for (let i = firstDay - 1; i >= 0; i--) html += `<div class="cal-day other-month" style="aspect-ratio:1;border-radius:var(--radius);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:14px;color:var(--text-muted);opacity:0.35;">${new Date(year,month,0).getDate()-i}</div>`;
+    for (let d = 1; d <= daysIn; d++) {
+      const ds = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const entries = entryMap[ds] || []; const pub = entries.filter(e => e.isPublic !== false);
+      const mood = pub.length > 0 ? MOOD_MAP[pub[0].mood_key] : null;
+      let cls = 'cal-day'; if (ds === todayStr) cls += ' today'; if (mood) cls += ' has-entry'; if (ds === selDate) cls += ' selected';
+      html += `<div class="cal-day ${cls.includes('other-month')?'':''}" style="aspect-ratio:1;border-radius:var(--radius);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;font-size:14px;border:1px solid ${mood?'var(--border)':'transparent'};${ds===todayStr?'font-weight:700;color:var(--accent-blue);':''}${ds===selDate?'border-color:var(--accent-blue);background:rgba(232,146,124,0.08);':''}" onclick="calView.selectDay('${ds}')"><span>${d}</span>${mood?`<span style="font-size:18px;">${mood.emoji}</span>`:''}</div>`;
     }
-
-    for (let d = 1; d <= daysInMonth; d++) {
-      const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-      const entry = entryMap[dateStr];
-      const mood = entry ? MOOD_MAP[entry.mood_key] : null;
-      let cls = 'cal-day';
-      if (dateStr === todayStr) cls += ' today';
-      if (mood) cls += ' has-entry';
-      if (dateStr === selectedDate) cls += ' selected';
-      html += `<div class="${cls}" onclick="calendarView.selectDay('${dateStr}')"><span class="day-num">${d}</span>${mood ? `<span class="day-mood">${mood.emoji}</span>` : ''}</div>`;
-    }
-
-    const remaining = 42 - (firstDay + daysInMonth);
-    for (let d = 1; d <= remaining; d++) html += `<div class="cal-day other-month"><span class="day-num">${d}</span></div>`;
+    const rem = 42 - (firstDay + daysIn); for (let d = 1; d <= rem; d++) html += `<div class="cal-day other-month" style="aspect-ratio:1;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--text-muted);opacity:0.35;">${d}</div>`;
     document.getElementById('calGrid').innerHTML = html;
     await renderPreview();
   }
-
-  async function selectDay(dateStr) { selectedDate = dateStr; await render(); }
-
+  async function selectDay(dateStr) { selDate = dateStr; await render(); }
   async function renderPreview() {
     const preview = document.getElementById('calPreview');
-    if (!selectedDate) { preview.innerHTML = '<div class="cal-preview-empty">点击某一天查看详情</div>'; return; }
-    const { data: entries } = await sb.from('diary_entries').select('*').eq('date', selectedDate).order('created_at', { ascending: false });
-    if (!entries || entries.length === 0) { preview.innerHTML = `<div class="cal-preview-empty">${selectedDate} 没有日记</div>`; return; }
-    preview.innerHTML = entries.map(e => {
-      const mood = MOOD_MAP[e.mood_key] || MOODS[0];
-      return `<div class="post" style="margin-bottom:6px;border:1px solid var(--border);border-radius:var(--radius-lg);" onclick="router.navigate('write');setTimeout(()=>app.editEntry(${e.id}),50)"><div class="post-header"><div class="post-avatar">${mood.emoji}</div><div class="post-info"><div class="post-name">${mood.label}</div>${e.title?`<div class="post-handle">${app.escHtml(e.title)}</div>`:''}</div></div>${e.content?`<div class="post-text">${app.escHtml(e.content).substring(0,120)}${e.content.length>120?'...':''}</div>`:''}</div>`;
-    }).join('');
+    if (!selDate) { preview.innerHTML = '<div style="color:var(--text-muted);font-size:13px;text-align:center;">点击某一天查看公开心情</div>'; return; }
+    const all = await DB.getByDate(selDate); const pub = all.filter(e => e.isPublic !== false);
+    if (pub.length === 0) { preview.innerHTML = `<div style="color:var(--text-muted);font-size:13px;text-align:center;">${selDate} 没有公开日记</div>`; return; }
+    preview.innerHTML = pub.map(e => homeView.cardHTML(e, 0)).join('');
   }
-
   init(); return { render, goToday, prevMonth, nextMonth, selectDay };
 })();
 
 // ==================== PROFILE VIEW ====================
 const profileView = {
-  async render() {
-    const { data: { user } } = await sb.auth.getUser();
+  profileUserId: null,
+  async render(uid) {
+    const userId = uid || (currentUser ? currentUser.id : null);
+    if (!userId) { document.getElementById('profileAvatar').textContent = '?'; return; }
+    this.profileUserId = userId;
+    const user = UserStore.findById(userId);
     if (!user) return;
-    const { data: profile } = await sb.from('profiles').select('*').eq('id', user.id).single();
+    const isSelf = currentUser && currentUser.id === userId;
 
-    document.getElementById('profileAvatar').textContent = (profile?.name || user.email?.[0] || '?').charAt(0).toUpperCase();
-    document.getElementById('profileName').textContent = profile?.name || user.email?.split('@')[0] || '未设置';
-    document.getElementById('profileHandle').textContent = profile?.handle || '@' + (user.email?.split('@')[0] || 'unknown');
-    document.getElementById('profileBio').textContent = profile?.bio || '还没有个人简介...';
-    document.getElementById('profileJoined').textContent = profile?.created_at ? `加入于 ${new Date(profile.created_at).toLocaleDateString('zh-CN')}` : '';
+    document.getElementById('profileAvatar').textContent = (user.name||user.username).charAt(0).toUpperCase();
+    document.getElementById('profileName').textContent = user.name || user.username;
+    document.getElementById('profileHandle').textContent = user.handle || '@'+user.username;
+    document.getElementById('profileBio').textContent = user.bio || '这个人很懒，什么都没有写...';
 
-    const { data: entries, count: total } = await sb.from('diary_entries').select('*', { count: 'exact' });
-    document.getElementById('statTotal').textContent = total || 0;
+    const all = await DB.getAll();
+    const userEntries = all.filter(e => e.userId === userId && e.isPublic !== false).sort((a,b) => b.createdAt - a.createdAt);
+    document.getElementById('profileEntryCount').textContent = userEntries.length;
+    document.getElementById('profileFollowerCount').textContent = UserStore.getFollowers(userId).length;
+    document.getElementById('profileFollowingCount').textContent = (user.following || []).length;
 
-    const now = new Date();
-    const thisMonth = (entries || []).filter(e => {
-      const d = new Date(e.created_at);
-      return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
-    });
-    document.getElementById('statMonth').textContent = thisMonth.length;
-    document.getElementById('statStreak').textContent = calcStreak(entries || []);
+    // Edit button (self only)
+    document.getElementById('btnEditProfile').style.display = isSelf ? '' : 'none';
+    // Follow button (others only, logged in)
+    const followBtn = document.getElementById('btnFollowProfile');
+    if (!isSelf && currentUser && currentUser.id !== userId) {
+      followBtn.style.display = '';
+      const following = (currentUser.following || []).includes(userId);
+      followBtn.textContent = following ? '已关注' : '关注';
+      followBtn.className = 'btn-follow' + (following ? ' following' : '');
+    } else { followBtn.style.display = 'none'; }
 
-    const dist = {};
-    for (const e of thisMonth) dist[e.mood_key] = (dist[e.mood_key] || 0) + 1;
-    document.getElementById('moodDist').innerHTML = MOODS.map(m => {
-      const count = dist[m.key] || 0;
-      const pct = thisMonth.length ? Math.round((count / thisMonth.length) * 100) : 0;
-      return `<div class="mood-dist-row"><span class="mood-dist-emoji">${m.emoji}</span><span style="font-size:11px;color:var(--text-muted);width:28px;">${m.label}</span><div class="mood-dist-bar-wrap"><div class="mood-dist-bar" style="width:${pct}%"></div></div><span class="mood-dist-count">${count}</span></div>`;
-    }).join('') || '<div style="color:var(--text-muted);font-size:13px;text-align:center;padding:12px;">本月暂无心情记录</div>';
+    // Show user's public entries
+    document.getElementById('profilePosts').innerHTML = userEntries.length === 0 ? '<div style="text-align:center;padding:40px;color:var(--text-muted);">还没有公开日记</div>' : userEntries.map((e, i) => homeView.cardHTML(e, i)).join('');
   }
 };
 
-function calcStreak(entries) {
-  if (!entries || entries.length === 0) return 0;
-  const dates = new Set(entries.map(e => e.date));
-  let streak = 0;
-  const d = new Date();
-  for (let i = 0; i < 365; i++) {
-    const dateStr = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-    if (dates.has(dateStr)) { streak++; d.setDate(d.getDate() - 1); }
-    else { if (i === 0) { d.setDate(d.getDate() - 1); continue; } break; }
-  }
-  return streak;
-}
-
 // ==================== RIGHT PANEL ====================
 async function updateRightPanel() {
-  const { data: entries } = await sb.from('diary_entries').select('*');
-  if (!entries) return;
-  const today = new Date();
-  const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
-  const todayEntries = entries.filter(e => e.date === todayStr);
+  const all = await DB.getAll(); const pub = all.filter(e => e.isPublic !== false);
+  const today = new Date(); const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+  const todayEntries = pub.filter(e => e.date === todayStr);
 
-  if (todayEntries.length > 0) {
-    const mood = MOOD_MAP[todayEntries[0].mood_key] || MOODS[0];
-    document.getElementById('todayMoodEmoji').textContent = mood.emoji;
-    document.getElementById('todayMoodLabel').textContent = `今天的心情：${mood.label}`;
-    document.getElementById('todayMoodSub').textContent = `已记录 ${todayEntries.length} 篇日记`;
-  } else {
-    document.getElementById('todayMoodEmoji').textContent = '😌';
-    document.getElementById('todayMoodLabel').textContent = '今天还没有记录';
-    document.getElementById('todayMoodSub').textContent = '记录今天的心情吧';
-  }
+  // Hot mood
+  const moodCounts = {}; for (const e of todayEntries) { moodCounts[e.mood_key] = (moodCounts[e.mood_key]||0) + 1; }
+  let topMood = null, topCount = 0;
+  for (const [k, v] of Object.entries(moodCounts)) { if (v > topCount) { topMood = k; topCount = v; } }
+  if (topMood) { const m = MOOD_MAP[topMood]; document.getElementById('hotMoodEmoji').textContent = m.emoji; document.getElementById('hotMoodLabel').textContent = m.label; document.getElementById('hotMoodCount').textContent = `${topCount} 人`; }
+  else { document.getElementById('hotMoodEmoji').textContent = '😌'; document.getElementById('hotMoodLabel').textContent = '今天还没有心情'; document.getElementById('hotMoodCount').textContent = ''; }
 
-  document.getElementById('rpStatTotal').textContent = entries.length;
-  const thisMonth = entries.filter(e => { const d = new Date(e.created_at); return d.getFullYear() === today.getFullYear() && d.getMonth() === today.getMonth(); });
-  document.getElementById('rpStatMonth').textContent = thisMonth.length;
-  document.getElementById('rpStatStreak').textContent = calcStreak(entries);
-  miniCal.render();
+  // Who to follow
+  const users = UserStore.getAll().filter(u => !currentUser || u.id !== currentUser.id);
+  const shuffled = users.sort(() => Math.random() - 0.5).slice(0, 3);
+  document.getElementById('whoToFollow').innerHTML = shuffled.map(u => {
+    const f = currentUser && (currentUser.following||[]).includes(u.id);
+    return `<div class="who-item"><div class="who-avatar" style="background:linear-gradient(135deg,#F0A89A,#E8927C);">${(u.name||u.username).charAt(0).toUpperCase()}</div><div class="who-info"><div class="who-name" style="cursor:pointer;" onclick="router.navigate('profile?user=${u.id}')">${app.esc(u.name||u.username)}</div><div class="who-handle">${u.handle||'@'+u.username}</div></div><button class="btn-follow${f?' following':''}" onclick="app.toggleFollow('${u.id}')">${f?'已关注':'关注'}</button></div>`;
+  }).join('') || '<div style="color:var(--text-muted);font-size:13px;text-align:center;padding:8px;">暂无其他用户</div>';
+
+  // Mood tag cloud
+  document.getElementById('moodTagCloud').innerHTML = MOODS.map(m => `<span class="tag-pill" onclick="router.navigate('explore');setTimeout(()=>exploreView.filter('${m.key}'),100)">${m.emoji} ${m.label}</span>`).join('');
 }
 
-// ==================== MINI CALENDAR ====================
-const miniCal = (() => {
-  let year, month;
-  function init() { const now = new Date(); year = now.getFullYear(); month = now.getMonth(); }
-  function prevMonth() { month--; if (month < 0) { month = 11; year--; } render(); }
-  function nextMonth() { month++; if (month > 11) { month = 0; year++; } render(); }
-
-  async function render() {
-    document.getElementById('miniCalMonth').textContent = `${year}年 ${month + 1}月`;
-    const today = new Date();
-    const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
-
-    const { data: entries } = await sb.from('diary_entries').select('date').gte('date', `${year}-${String(month+1).padStart(2,'0')}-01`).lte('date', `${year}-${String(month+1).padStart(2,'0')}-31`);
-    const entrySet = new Set((entries || []).map(e => e.date));
-
-    const firstDay = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    let html = ['日','一','二','三','四','五','六'].map(l => `<div class="mini-cal-day-label">${l}</div>`).join('');
-
-    const prevDays = new Date(year, month, 0).getDate();
-    for (let i = firstDay - 1; i >= 0; i--) html += `<div class="mini-cal-day other">${prevDays - i}</div>`;
-
-    for (let d = 1; d <= daysInMonth; d++) {
-      const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-      let cls = 'mini-cal-day';
-      if (dateStr === todayStr) cls += ' today';
-      if (entrySet.has(dateStr)) cls += ' has-entry';
-      html += `<div class="${cls}" onclick="app.goToDate('${dateStr}')">${d}</div>`;
-    }
-
-    const total = firstDay + daysInMonth;
-    for (let d = 1; d <= (total <= 35 ? 35 - total : 42 - total); d++) html += `<div class="mini-cal-day other">${d}</div>`;
-    document.getElementById('miniCalGrid').innerHTML = html;
-  }
-
-  init(); return { render, prevMonth, nextMonth };
-})();
-
 // ==================== APP ====================
+let isPublicEntry = true;
 const app = {
   async init() {
-    // Bind event listeners once
+    authStore.init();
+    await DB.open();
+
     document.getElementById('diaryContent').addEventListener('input', () => {
       document.getElementById('charCount').textContent = `${document.getElementById('diaryContent').value.length} 字`;
     });
     document.getElementById('quickContent').addEventListener('input', function() {
-      this.style.height = 'auto';
-      this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+      this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 120) + 'px';
     });
+
     router._onChange();
   },
 
-  escHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
-  },
+  esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; },
 
   selectQuickMood(btn) {
     document.querySelectorAll('#quickMoods .compose-mood-btn').forEach(b => b.classList.remove('selected'));
@@ -1357,174 +994,170 @@ const app = {
     document.getElementById('quickMoods').dataset.selected = btn.dataset.mood;
   },
 
+  togglePrivacy() {
+    isPublicEntry = !isPublicEntry;
+    const el = document.getElementById('privacyToggle');
+    el.textContent = isPublicEntry ? '🌐 公开' : '🔒 私密';
+    el.style.color = isPublicEntry ? '' : 'var(--accent-blue)';
+  },
+
+  toggleWritePrivacy() {
+    isPublicEntry = !isPublicEntry;
+    const el = document.getElementById('writePrivacyToggle');
+    el.textContent = isPublicEntry ? '🌐 公开' : '🔒 私密';
+  },
+
   async quickPublish() {
-    const moodKey = document.getElementById('quickMoods').dataset.selected || 'calm';
+    if (!currentUser) { authUI.showLogin(); return; }
+    const moodKey = document.getElementById('quickMoods').dataset.selected || 'happy';
     const content = document.getElementById('quickContent').value.trim();
     if (!content) { this.toast('请写点什么吧'); return; }
-
     const today = new Date();
-    const dateStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
-    const { data: { user } } = await sb.auth.getUser();
-
-    const { error } = await sb.from('diary_entries').insert({
-      user_id: user.id, date: dateStr, mood_key: moodKey, title: '', content,
-      images: quickImageHandler.getImages()
-    });
-    if (error) { this.toast('保存失败: ' + error.message); return; }
-
-    document.getElementById('quickContent').value = '';
-    document.getElementById('quickContent').style.height = 'auto';
-    quickImageHandler.reset(); quickImageHandler.renderPreviews();
-    this.toast('日记已发布 🎉');
-    await homeView.render(); await updateRightPanel();
+    const ds = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+    await DB.add({ id:'entry_'+Date.now(), userId:currentUser.id, date:ds, mood_key:moodKey, title:'', content, images:quickImg.get(), isPublic:isPublicEntry, likes:[], comments:[], createdAt:Date.now(), updatedAt:Date.now() });
+    document.getElementById('quickContent').value = ''; document.getElementById('quickContent').style.height = 'auto';
+    quickImg.reset(); quickImg.render(); isPublicEntry = true; document.getElementById('privacyToggle').textContent = '🌐 公开';
+    this.toast('已发布 🎉'); await homeView.render(); await updateRightPanel();
   },
-
-  async quickMoodForDate(dateStr) {
-    const today = new Date();
-    const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
-    if (dateStr === todayStr) { document.getElementById('quickContent').focus(); this.toast('记录今天的心情吧'); }
-    else { document.getElementById('editDate').value = dateStr; router.navigate('write'); this.toast(`补记 ${dateStr} 的心情`); }
-  },
-
-  async goToDate(dateStr) { router.navigate('calendar'); setTimeout(async () => { await calendarView.selectDay(dateStr); }, 150); },
 
   async saveEntry() {
+    if (!currentUser) { authUI.showLogin(); return; }
     const moodBtn = document.querySelector('#moodPicker .mood-btn.selected');
     if (!moodBtn) { this.toast('请选择心情'); return; }
-    const moodKey = moodBtn.dataset.mood;
     const title = document.getElementById('diaryTitle').value.trim();
     const content = document.getElementById('diaryContent').value.trim();
-    if (!content && !title) { this.toast('请输入标题或内容'); return; }
-
+    if (!content && !title) { this.toast('请输入内容'); return; }
     const editId = document.getElementById('editId').value;
-    const now = new Date();
-    const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-    const entryDate = document.getElementById('editDate').value || dateStr;
-
-    if (editId) {
-      const { error } = await sb.from('diary_entries').update({ mood_key: moodKey, title, content, images: imageHandler.getImages(), date: entryDate, updated_at: new Date().toISOString() }).eq('id', editId);
-      if (error) { this.toast('更新失败'); return; }
-    } else {
-      const { data: { user } } = await sb.auth.getUser();
-      const { error } = await sb.from('diary_entries').insert({ user_id: user.id, date: entryDate, mood_key: moodKey, title, content, images: imageHandler.getImages() });
-      if (error) { this.toast('保存失败'); return; }
-    }
-
-    document.getElementById('editId').value = '';
-    document.getElementById('editDate').value = '';
-    document.getElementById('diaryTitle').value = '';
-    document.getElementById('diaryContent').value = '';
-    document.getElementById('charCount').textContent = '0 字';
-    imageHandler.reset(); imageHandler.renderPreviews();
-    this.toast(editId ? '日记已更新' : '日记已保存');
-    router.navigate('home');
+    const today = new Date();
+    const ds = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+    const entry = {
+      id: editId || 'entry_'+Date.now(), userId: currentUser.id,
+      date: document.getElementById('editDate').value || ds,
+      mood_key: moodBtn.dataset.mood, title, content, images: imgHandler.get(),
+      isPublic: isPublicEntry, likes: (editId ? (await DB.getAll()).find(e=>e.id===editId)?.likes : []) || [],
+      comments: (editId ? (await DB.getAll()).find(e=>e.id===editId)?.comments : []) || [],
+      createdAt: editId ? ((await DB.getAll()).find(e=>e.id===editId)?.createdAt || Date.now()) : Date.now(),
+      updatedAt: Date.now()
+    };
+    if (editId) await DB.put(entry); else await DB.add(entry);
+    document.getElementById('editId').value = ''; document.getElementById('editDate').value = '';
+    document.getElementById('diaryTitle').value = ''; document.getElementById('diaryContent').value = '';
+    imgHandler.reset(); imgHandler.render(); isPublicEntry = true;
+    this.toast(editId ? '已更新' : '已保存'); router.navigate('home');
   },
 
   async editEntry(id) {
-    const { data: entry } = await sb.from('diary_entries').select('*').eq('id', id).single();
-    if (!entry) return;
-    document.getElementById('editId').value = entry.id;
-    document.getElementById('editDate').value = entry.date;
-    document.getElementById('diaryTitle').value = entry.title || '';
-    document.getElementById('diaryContent').value = entry.content || '';
-    document.getElementById('charCount').textContent = `${(entry.content || '').length} 字`;
-    imageHandler.setImages(entry.images || []); imageHandler.renderPreviews();
-    document.querySelectorAll('#moodPicker .mood-btn').forEach(b => b.classList.toggle('selected', b.dataset.mood === entry.mood_key));
+    if (!currentUser) { authUI.showLogin(); return; }
+    const all = await DB.getAll(); const e = all.find(en => en.id == id);
+    if (!e || e.userId !== currentUser.id) { this.toast('无权编辑'); return; }
+    document.getElementById('editId').value = e.id; document.getElementById('editDate').value = e.date;
+    document.getElementById('diaryTitle').value = e.title||''; document.getElementById('diaryContent').value = e.content||'';
+    document.getElementById('charCount').textContent = `${(e.content||'').length} 字`;
+    imgHandler.set(e.images||[]); imgHandler.render();
+    isPublicEntry = e.isPublic !== false;
+    document.querySelectorAll('#moodPicker .mood-btn').forEach(b => b.classList.toggle('selected', b.dataset.mood === e.mood_key));
     writeView.render();
   },
 
-  async deleteEntry(id) {
-    if (!confirm('确定删除这篇日记吗？')) return;
-    await sb.from('diary_entries').delete().eq('id', id);
-    this.toast('日记已删除');
-    await homeView.render(); await updateRightPanel();
+  async deleteEntry() { /* not used in card, kept for reference */ },
+
+  async toggleLike(entryId) {
+    if (!currentUser) { this.toast('请先登录'); return; }
+    const all = await DB.getAll(); const e = all.find(en => en.id == entryId);
+    if (!e) return;
+    const likes = e.likes || [];
+    const idx = likes.indexOf(currentUser.id);
+    if (idx >= 0) likes.splice(idx, 1); else likes.push(currentUser.id);
+    e.likes = likes;
+    await DB.put(e);
+    await homeView.render();
+  },
+
+  async toggleComments(entryId) {
+    const el = document.getElementById('comments-' + entryId);
+    if (!el) return;
+    el.style.display = el.style.display === 'none' ? '' : 'none';
+    if (el.style.display !== 'none') {
+      const inp = document.getElementById('commentInput-' + entryId);
+      if (inp) inp.focus();
+    }
+  },
+
+  async addComment(entryId) {
+    if (!currentUser) { this.toast('请先登录'); return; }
+    const inp = document.getElementById('commentInput-' + entryId);
+    if (!inp) return;
+    const content = inp.value.trim();
+    if (!content) return;
+    const all = await DB.getAll(); const e = all.find(en => en.id == entryId);
+    if (!e) return;
+    e.comments = e.comments || [];
+    e.comments.push({ id: 'c_'+Date.now(), userId: currentUser.id, content, createdAt: Date.now() });
+    await DB.put(e); inp.value = '';
+    await homeView.render();
+    // Re-expand comments
+    const el = document.getElementById('comments-' + entryId);
+    if (el) el.style.display = '';
+  },
+
+  async toggleFollow(userId) {
+    if (!currentUser) { this.toast('请先登录'); return; }
+    const following = currentUser.following || [];
+    const idx = following.indexOf(userId);
+    if (idx >= 0) following.splice(idx, 1); else following.push(userId);
+    currentUser.following = following;
+    UserStore.update(currentUser.id, { following });
+    sessionStorage.setItem('ink_user', JSON.stringify(currentUser));
+    await updateRightPanel();
+    if (router.current === 'profile') profileView.render(profileView.profileUserId);
+  },
+
+  async toggleFollowProfile() {
+    if (!currentUser || !profileView.profileUserId) { this.toast('请先登录'); return; }
+    await this.toggleFollow(profileView.profileUserId);
+    profileView.render(profileView.profileUserId);
   },
 
   openLightbox(src) { document.getElementById('lightboxImg').src = src; document.getElementById('lightbox').classList.add('open'); },
 
   async searchEntries(query) {
-    const resultsDiv = document.getElementById('searchResults');
-    if (!query || query.trim().length === 0) { resultsDiv.style.display = 'none'; return; }
-    const { data: entries } = await sb.from('diary_entries').select('*').or(`content.ilike.%${query}%,title.ilike.%${query}%`).order('created_at', { ascending: false }).limit(10);
-    if (!entries || entries.length === 0) { resultsDiv.style.display = 'block'; resultsDiv.innerHTML = '<div class="explore-card"><div class="explore-card-body" style="padding:16px;color:var(--text-muted);font-size:13px;text-align:center;">未找到匹配的日记</div></div>'; return; }
-    resultsDiv.style.display = 'block';
-    resultsDiv.innerHTML = `<div class="explore-card"><div class="explore-card-header">搜索结果 (${entries.length})</div><div class="explore-card-body" style="padding:0;">${entries.slice(0,5).map(e => { const mood = MOOD_MAP[e.mood_key] || MOODS[0]; return `<div style="padding:10px 16px;cursor:pointer;border-bottom:1px solid var(--border);" onmouseover="this.style.background='var(--bg-card-hover)'" onmouseout="this.style.background=''" onclick="router.navigate('write');setTimeout(()=>app.editEntry(${e.id}),50)"><div style="display:flex;align-items:center;gap:8px;"><span style="font-size:20px;">${mood.emoji}</span><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;">${app.escHtml(e.title||e.content).substring(0,40)}</div><div style="font-size:11px;color:var(--text-muted);">${mood.label} · ${e.date}</div></div></div></div>`; }).join('')}</div></div>`;
+    const div = document.getElementById('searchResults');
+    if (!query || !query.trim()) { div.style.display = 'none'; return; }
+    const all = await DB.getAll(); const pub = all.filter(e => e.isPublic !== false);
+    const q = query.toLowerCase();
+    const matched = pub.filter(e => (e.content||'').toLowerCase().includes(q) || (e.title||'').toLowerCase().includes(q)).sort((a,b) => b.createdAt - a.createdAt);
+    if (matched.length === 0) { div.style.display = 'block'; div.innerHTML = '<div class="explore-card"><div class="explore-card-body" style="padding:14px;color:var(--text-muted);font-size:13px;text-align:center;">未找到</div></div>'; return; }
+    div.style.display = 'block';
+    div.innerHTML = `<div class="explore-card"><div class="explore-card-header">搜索结果 (${matched.length})</div><div class="explore-card-body" style="padding:0;">${matched.slice(0,5).map(e => { const u = UserStore.findById(e.userId)||{name:'?'}; const m = MOOD_MAP[e.mood_key]||MOODS[0]; return `<div style="padding:10px 16px;cursor:pointer;border-bottom:1px solid var(--border);" onclick="router.navigate('profile?user=${e.userId}')"><span style="font-size:16px;">${m.emoji}</span> <span style="font-weight:600;">${app.esc(u.name||'?')}</span>: ${app.esc((e.title||e.content||'').substring(0,40))}</div>`; }).join('')}</div></div>`;
   },
 
   openProfileEdit() {
-    const nameEl = document.getElementById('profileName');
-    const handleEl = document.getElementById('profileHandle');
-    const bioEl = document.getElementById('profileBio');
-    document.getElementById('editName').value = nameEl.textContent === '未设置' ? '' : nameEl.textContent;
-    document.getElementById('editHandle').value = handleEl.textContent === '@unknown' ? '' : handleEl.textContent;
-    document.getElementById('editBio').value = bioEl.textContent === '还没有个人简介...' ? '' : bioEl.textContent;
+    document.getElementById('editName').value = currentUser.name || '';
+    document.getElementById('editHandle').value = currentUser.handle || '';
+    document.getElementById('editBio').value = currentUser.bio || '';
     document.getElementById('modalOverlay').classList.add('open');
   },
-
   closeProfileEdit() { document.getElementById('modalOverlay').classList.remove('open'); },
-
-  async saveProfile() {
+  saveProfile() {
     const name = document.getElementById('editName').value.trim();
     const handle = document.getElementById('editHandle').value.trim();
     const bio = document.getElementById('editBio').value.trim();
-    const { data: { user } } = await sb.auth.getUser();
-    await sb.from('profiles').upsert({ id: user.id, name, handle: handle.startsWith('@') ? handle : '@' + handle, bio });
+    const u = UserStore.update(currentUser.id, { name, handle: handle.startsWith('@')?handle:'@'+handle, bio });
+    if (u) { currentUser = u; sessionStorage.setItem('ink_user', JSON.stringify(currentUser)); }
     this.closeProfileEdit();
-    await profileView.render();
-    await updateSidebarUser();
+    updateUIState();
+    if (router.current === 'profile') profileView.render(currentUser.id);
     this.toast('资料已更新');
   },
 
-  openChangePassword() { document.getElementById('newPassword').value = ''; document.getElementById('pwdError').textContent = ''; document.getElementById('pwdModalOverlay').classList.add('open'); },
-  closeChangePassword() { document.getElementById('pwdModalOverlay').classList.remove('open'); },
-
-  async confirmChangePassword() {
-    const newPassword = document.getElementById('newPassword').value;
-    if (!newPassword || newPassword.length < 6) { document.getElementById('pwdError').textContent = '新密码至少需要 6 位字符'; return; }
-    const { error } = await sb.auth.updateUser({ password: newPassword });
-    if (error) { document.getElementById('pwdError').textContent = error.message; return; }
-    this.closeChangePassword(); this.toast('密码已更新');
-  },
-
-  async exportData() {
-    const { data: entries } = await sb.from('diary_entries').select('*').order('created_at', { ascending: false });
-    const { data: { user } } = await sb.auth.getUser();
-    const { data: profile } = await sb.from('profiles').select('*').eq('id', user.id).single();
-    const data = { user: profile, entries, exportedAt: new Date().toISOString() };
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-    a.download = `mooddiary_backup_${new Date().toISOString().split('T')[0]}.json`; a.click();
-    URL.revokeObjectURL(a.href); this.toast('数据已导出');
-  },
-
-  async importData(input) {
-    try {
-      const file = input.files[0]; if (!file) return;
-      const text = await file.text(); const data = JSON.parse(text);
-      if (!data.entries || !Array.isArray(data.entries)) throw new Error('Invalid');
-      if (!confirm(`即将导入 ${data.entries.length} 条日记。确认？`)) return;
-      const { data: { user } } = await sb.auth.getUser();
-      for (const e of data.entries) {
-        await sb.from('diary_entries').insert({ ...e, user_id: user.id, id: undefined });
-      }
-      this.toast(`已导入 ${data.entries.length} 条日记`); router._onChange();
-    } catch (e) { this.toast('导入失败：文件格式错误'); }
-    input.value = '';
-  },
-
-  toast(msg) {
-    const el = document.getElementById('toast'); el.textContent = msg; el.classList.add('show');
-    clearTimeout(el._timeout); el._timeout = setTimeout(() => el.classList.remove('show'), 2000);
-  }
+  toast(msg) { const el = document.getElementById('toast'); el.textContent = msg; el.classList.add('show'); clearTimeout(el._timeout); el._timeout = setTimeout(() => el.classList.remove('show'), 2000); }
 };
 
-// Modal close handlers
+// Modal close
 document.getElementById('modalOverlay').addEventListener('click', function(e) { if (e.target === this) app.closeProfileEdit(); });
-document.getElementById('pwdModalOverlay').addEventListener('click', function(e) { if (e.target === this) app.closeChangePassword(); });
-document.getElementById('newPassword').addEventListener('keydown', function(e) { if (e.key === 'Enter') app.confirmChangePassword(); });
+document.getElementById('loginOverlay').addEventListener('click', function(e) { if (e.target === this) authUI.hideLogin(); });
 
-// ==================== BOOT ====================
-authHandler.checkSession();
+app.init();
 </script>
 </body>
 </html>
