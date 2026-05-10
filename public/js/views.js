@@ -11,11 +11,34 @@ const homeView = {
     if (entries.length === 0) { list.innerHTML = ''; empty.style.display = 'flex'; }
     else { empty.style.display = 'none'; list.innerHTML = entries.map((e, i) => diaryCardHTML(e, i)).join(''); }
 
+    // Stories row — last 6 days
+    renderStories(entries);
+
     // Quick mood picker
     document.getElementById('quickMoods').innerHTML = quickMoodPickerHTML('happy');
     document.getElementById('quickMoods').dataset.selected = 'happy';
   }
 };
+
+function renderStories(entries) {
+  const row = document.getElementById('storiesRow');
+  if (!row) return;
+  const today = new Date();
+  const map = {};
+  for (const e of entries) { if (!map[e.date]) map[e.date] = e; }
+
+  let html = '';
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(today); d.setDate(d.getDate() - i);
+    const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const entry = map[ds]; const mood = entry ? MOOD_MAP[entry.mood_key] : null;
+    const label = i === 0 ? '今天' : i === 1 ? '昨天' : ['日','一','二','三','四','五','六'][d.getDay()];
+    html += `<div class="story-ring-wrap" ${mood ? `onclick="router.navigate('write');setTimeout(()=>app.editEntry(${entry.id}),50)"` : ''}>
+      <div class="story-ring${mood?'':' no-story'}"><div class="story-ring-inner">${mood ? mood.emoji : '+'}</div></div>
+      <span class="story-label">${label}</span></div>`;
+  }
+  row.innerHTML = html;
+}
 
 // ==================== EXPLORE VIEW ====================
 const exploreView = {
