@@ -24,16 +24,16 @@ const Auth = {
     }
   },
 
-  async login(username, password, remember) {
-    const data = await API.post('/api/auth/login', { username, password, remember_me: remember });
+  async login(email, password, remember) {
+    const data = await API.post('/api/auth/login', { email, password, remember_me: remember });
     if (data.error) return data;
     TokenStore.set(data.token, remember);
     currentUser = data.user;
     return {};
   },
 
-  async register(username, password, question, answer, remember) {
-    const data = await API.post('/api/auth/register', { username, password, display_name: username, security_question: question, security_answer: answer, remember_me: remember });
+  async register(email, phone, display_name, password, remember) {
+    const data = await API.post('/api/auth/register', { email, phone, display_name, password, remember_me: remember });
     if (data.error) return data;
     TokenStore.set(data.token, remember);
     currentUser = data.user;
@@ -66,32 +66,22 @@ const Auth = {
 // ==================== MODAL LOGIN (quick access) ====================
 const authUI = (() => {
   let mode = 'login';
-  function show(m = 'login') { mode = m; switchTab(m); document.getElementById('loginOverlay').classList.add('open'); }
+  function show() { mode = 'login'; document.getElementById('loginOverlay').classList.add('open'); }
   function hide() { document.getElementById('loginOverlay').classList.remove('open'); }
-  function switchTab(tab) {
-    mode = tab;
-    document.querySelectorAll('#loginOverlay .login-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
-    document.getElementById('loginSubtitle').textContent = tab === 'login' ? '登录你的账号' : '创建一个新账号';
-    document.getElementById('loginBtn').textContent = tab === 'login' ? '登录' : '注册';
-    document.getElementById('loginError').textContent = '';
-  }
   async function submit() {
-    const username = document.getElementById('loginUsername').value.trim();
+    const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value;
-    if (!username || !password) { document.getElementById('loginError').textContent = '请填写完整'; return; }
-    const r = mode === 'login' ? await Auth.login(username, password, false) : await Auth.register(username, password, '', '', false);
+    if (!email || !password) { document.getElementById('loginError').textContent = '请填写完整'; return; }
+    const r = mode === 'login' ? await Auth.login(email, password, false) : await Auth.register(email, '', email.split('@')[0], password, false);
     if (r.error) { document.getElementById('loginError').textContent = r.error; return; }
     hide(); router._onChange();
   }
-  function oauthLogin(provider) { window.location.href = '/api/auth/' + provider; }
-  return { show, hide, switchTab, submit, oauthLogin };
+  return { show, hide, submit };
 })();
 
 // ==================== STANDALONE LOGIN PAGE ====================
 const loginPage = (() => {
   let mode = 'login';
-  let forgotUserId = null;
-  let forgotQuestion = '';
 
   function clearErrors() {
     document.querySelectorAll('.field-error').forEach(e => e.textContent = '');
@@ -108,10 +98,6 @@ const loginPage = (() => {
     document.querySelectorAll('#view-login .tab').forEach(t => t.classList.toggle('active', (t.textContent.includes('登录') && tab === 'login') || (t.textContent.includes('注册') && tab === 'register')));
     document.getElementById('loginFormBlock').style.display = tab === 'login' ? '' : 'none';
     document.getElementById('registerFormBlock').style.display = tab === 'register' ? '' : 'none';
-    document.getElementById('forgotBlock').classList.remove('active');
-    document.getElementById('forgotStep2').style.display = 'none';
-    document.getElementById('forgotStep3').style.display = 'none';
-    document.getElementById('forgotStep1').style.display = '';
   }
 
   async function submit() {
@@ -122,24 +108,23 @@ const loginPage = (() => {
 
     try {
       if (mode === 'login') {
-        const username = document.getElementById('lpUsername').value.trim();
+        const email = document.getElementById('lpEmail').value.trim();
         const password = document.getElementById('lpPassword').value;
         const remember = document.getElementById('lpRemember').checked;
-        if (!username) { document.getElementById('lpUserErr').textContent = '请输入用户名'; btn.disabled = false; btn.textContent = origText; return; }
+        if (!email) { document.getElementById('lpEmailErr').textContent = '请输入邮箱'; btn.disabled = false; btn.textContent = origText; return; }
         if (!password) { document.getElementById('lpPwdErr').textContent = '请输入密码'; btn.disabled = false; btn.textContent = origText; return; }
-        const r = await Auth.login(username, password, remember);
+        const r = await Auth.login(email, password, remember);
         if (r.error) { document.getElementById('lpPwdErr').textContent = r.error; btn.disabled = false; btn.textContent = origText; return; }
       } else {
-        const username = document.getElementById('rpUsername').value.trim();
+        const email = document.getElementById('rpEmail').value.trim();
+        const phone = document.getElementById('rpPhone').value.trim();
+        const name = document.getElementById('rpName').value.trim();
         const password = document.getElementById('rpPassword').value;
-        const question = document.getElementById('rpQuestion').value.trim();
-        const answer = document.getElementById('rpAnswer').value.trim();
         const remember = document.getElementById('rpRemember').checked;
-        if (!username) { document.getElementById('rpUserErr').textContent = '请输入用户名'; btn.disabled = false; btn.textContent = origText; return; }
+        if (!email) { document.getElementById('rpEmailErr').textContent = '请输入邮箱'; btn.disabled = false; btn.textContent = origText; return; }
         if (!password || password.length < 4) { document.getElementById('rpPwdErr').textContent = '密码至少4位'; btn.disabled = false; btn.textContent = origText; return; }
-        if (!question || !answer) { document.getElementById('rpAnsErr').textContent = '请设置密保问题和答案（用于找回密码）'; btn.disabled = false; btn.textContent = origText; return; }
-        const r = await Auth.register(username, password, question, answer, remember);
-        if (r.error) { document.getElementById('rpUserErr').textContent = r.error; btn.disabled = false; btn.textContent = origText; return; }
+        const r = await Auth.register(email, phone, name || email.split('@')[0], password, remember);
+        if (r.error) { document.getElementById('rpEmailErr').textContent = r.error; btn.disabled = false; btn.textContent = origText; return; }
       }
       router.navigate('home');
     } finally {
@@ -147,44 +132,6 @@ const loginPage = (() => {
     }
   }
 
-  async function showForgot() {
-    document.getElementById('loginFormBlock').style.display = 'none';
-    document.getElementById('registerFormBlock').style.display = 'none';
-    document.getElementById('forgotBlock').classList.add('active');
-  }
-
-  function backToLogin() {
-    document.getElementById('forgotBlock').classList.remove('active');
-    document.getElementById('loginFormBlock').style.display = '';
-    document.getElementById('forgotStep2').style.display = 'none';
-    document.getElementById('forgotStep3').style.display = 'none';
-    document.getElementById('forgotStep1').style.display = '';
-  }
-
-  async function forgotSubmit() {
-    const username = document.getElementById('fpUsername').value.trim();
-    if (!username) { toast('请输入用户名'); return; }
-    const data = await API.post('/api/auth/forgot-password', { username });
-    if (data.error) { toast(data.error); return; }
-    forgotUserId = data.userId;
-    forgotQuestion = data.question;
-    document.getElementById('fpQuestion').textContent = forgotQuestion;
-    document.getElementById('forgotStep1').style.display = 'none';
-    document.getElementById('forgotStep2').style.display = '';
-  }
-
-  async function resetSubmit() {
-    const answer = document.getElementById('fpAnswer').value.trim();
-    const newPassword = document.getElementById('fpNewPwd').value;
-    if (!answer || !newPassword) { toast('请填写完整'); return; }
-    if (newPassword.length < 4) { toast('新密码至少4位'); return; }
-    const data = await API.post('/api/auth/reset-password', { userId: forgotUserId, answer, newPassword });
-    if (data.error) { toast(data.error); return; }
-    document.getElementById('forgotStep2').style.display = 'none';
-    document.getElementById('forgotStep3').style.display = '';
-  }
-
-  // Handle OAuth callback
   function handleCallback() {
     const params = new URLSearchParams(location.hash.split('?')[1] || '');
     const token = params.get('token');
@@ -196,5 +143,5 @@ const loginPage = (() => {
     }
   }
 
-  return { switchTab, submit, showForgot, backToLogin, forgotSubmit, resetSubmit, handleCallback };
+  return { switchTab, submit, togglePwd, handleCallback };
 })();

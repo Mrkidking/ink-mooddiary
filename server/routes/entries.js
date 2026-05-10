@@ -28,7 +28,7 @@ router.get('/', optionalAuth, (req, res) => {
 
     const countRow = getDB().prepare(`SELECT COUNT(*) as total FROM entries e ${where}`).get(...params);
     const total = countRow ? (countRow.total || 0) : 0;
-    const entries = getDB().prepare(`SELECT e.*, u.username, u.display_name, u.avatar_url FROM entries e JOIN users u ON e.user_id = u.id ${where} ORDER BY e.created_at DESC`).all(...params);
+    const entries = getDB().prepare(`SELECT e.*, u.display_name, u.avatar_url FROM entries e JOIN users u ON e.user_id = u.id ${where} ORDER BY e.created_at DESC`).all(...params);
 
     const enriched = (entries || []).map(e => {
       const images = (getDB().prepare('SELECT image_url FROM entry_images WHERE entry_id = ? ORDER BY sort_order').all(e.id) || []).map(r => r.image_url);
@@ -36,7 +36,7 @@ router.get('/', optionalAuth, (req, res) => {
       const cc = getDB().prepare('SELECT COUNT(*) as c FROM comments WHERE entry_id = ?').get(e.id);
       let liked = false;
       if (req.userId) liked = !!getDB().prepare('SELECT id FROM likes WHERE user_id = ? AND entry_id = ?').get(req.userId, e.id);
-      return { ...e, images, likes_count: lc ? lc.c : 0, comments_count: cc ? cc.c : 0, liked, user: { username: e.username, display_name: e.display_name, avatar_url: e.avatar_url } };
+      return { ...e, images, likes_count: lc ? lc.c : 0, comments_count: cc ? cc.c : 0, liked, user: { display_name: e.display_name, avatar_url: e.avatar_url } };
     });
 
     res.json({ entries: enriched, total, page: 1 });
@@ -55,7 +55,7 @@ function isPublic(val) { return ![false, 'false', 0, '0'].includes(val); }
 router.get('/:id', optionalAuth, (req, res) => {
   const id = safeInt(req.params.id);
   if (!id) return res.status(400).json({ error: '无效的日记ID' });
-  const e = getDB().prepare('SELECT e.*, u.username, u.display_name, u.avatar_url FROM entries e JOIN users u ON e.user_id = u.id WHERE e.id = ?').get(id);
+  const e = getDB().prepare('SELECT e.*, u.display_name, u.avatar_url FROM entries e JOIN users u ON e.user_id = u.id WHERE e.id = ?').get(id);
   if (!e) return res.status(404).json({ error: '日记不存在' });
 
   const images = (getDB().prepare('SELECT image_url FROM entry_images WHERE entry_id = ? ORDER BY sort_order').all(e.id) || []).map(r => r.image_url);
@@ -64,7 +64,7 @@ router.get('/:id', optionalAuth, (req, res) => {
   let liked = false;
   if (req.userId) liked = !!getDB().prepare('SELECT id FROM likes WHERE user_id = ? AND entry_id = ?').get(req.userId, e.id);
 
-  res.json({ entry: { ...e, images, likes_count: lc ? lc.c : 0, comments_count: cc ? cc.c : 0, liked, user: { username: e.username, display_name: e.display_name, avatar_url: e.avatar_url } } });
+  res.json({ entry: { ...e, images, likes_count: lc ? lc.c : 0, comments_count: cc ? cc.c : 0, liked, user: { display_name: e.display_name, avatar_url: e.avatar_url } } });
 });
 
 // POST /api/entries

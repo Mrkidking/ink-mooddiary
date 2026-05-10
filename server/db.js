@@ -77,13 +77,12 @@ async function init() {
   sqlDb.run(`
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      username TEXT UNIQUE NOT NULL,
+      email TEXT UNIQUE NOT NULL,
+      phone TEXT DEFAULT '',
       password TEXT NOT NULL,
       display_name TEXT DEFAULT '',
       bio TEXT DEFAULT '',
       avatar_url TEXT DEFAULT '',
-      security_question TEXT DEFAULT '',
-      security_answer TEXT DEFAULT '',
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
     CREATE TABLE IF NOT EXISTS entries (
@@ -127,9 +126,9 @@ async function init() {
     );
   `);
 
-  // Migration: add security columns for existing databases
-  try { sqlDb.run('ALTER TABLE users ADD COLUMN security_question TEXT DEFAULT \'\''); } catch {}
-  try { sqlDb.run('ALTER TABLE users ADD COLUMN security_answer TEXT DEFAULT \'\''); } catch {}
+  // Migration: add email/phone columns for existing databases
+  try { sqlDb.run('ALTER TABLE users ADD COLUMN email TEXT DEFAULT \'\''); } catch {}
+  try { sqlDb.run('ALTER TABLE users ADD COLUMN phone TEXT DEFAULT \'\''); } catch {}
 
   save();
   console.log('[DB] Initialized');

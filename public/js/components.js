@@ -34,8 +34,8 @@ function diaryCardHTML(entry, index) {
   const comments = entry.comments_count || 0;
   const liked = entry.liked;
   const imgs = entry.images || [];
-  const avatarBg = avatarGradient(user.username || entry.user_id);
-  const initial = (user.display_name || user.username || '?').charAt(0).toUpperCase();
+  const avatarBg = avatarGradient(user['email'] || entry.user_id);
+  const initial = (user.display_name || user['email'] || '?').charAt(0).toUpperCase();
 
   const imgHTML = imgs.length ? `<div class="post-media"><div class="post-media-grid cols-${Math.min(imgs.length,2)}">${imgs.map(img => `<div class="media-item"><img src="${img}" alt="" onclick="event.stopPropagation();Lightbox.open('${img}')"></div>`).join('')}</div></div>` : '';
 
@@ -44,8 +44,8 @@ function diaryCardHTML(entry, index) {
       <div class="post-avatar" style="${avatarBg}" onclick="router.navigate('profile?user=${entry.user_id}')">${initial}</div>
       <div class="post-info">
         <div class="post-name-row">
-          <span class="post-name" onclick="router.navigate('profile?user=${entry.user_id}')">${esc(user.display_name || user.username || '未知')}</span>
-          <span class="post-handle">@${esc(user.username || 'unknown')}</span>
+          <span class="post-name" onclick="router.navigate('profile?user=${entry.user_id}')">${esc(user.display_name || user['email'] || '未知')}</span>
+          <span class="post-handle">${esc(user.display_name || user['email'] || '?')}</span>
         </div>
         <span class="post-time">${mood.emoji} ${mood.label} · ${timeAgo(entry.created_at)}</span>
       </div>

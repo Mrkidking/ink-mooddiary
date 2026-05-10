@@ -53,7 +53,7 @@ function updateUIState() {
   const composeAvatar = document.getElementById('composeAvatar');
 
   if (loggedIn) {
-    const initial = (currentUser.display_name || currentUser.username || '?').charAt(0).toUpperCase();
+    const initial = (currentUser.display_name || currentUser.email || '?').charAt(0).toUpperCase();
     const avatarUrl = currentUser.avatar_url || '';
     if (avatarUrl) {
       avatar.innerHTML = `<img src="${avatarUrl}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
@@ -63,8 +63,8 @@ function updateUIState() {
       if (composeAvatar) composeAvatar.textContent = initial;
     }
     avatar.style.background = avatarUrl ? 'none' : 'var(--gradient-story)';
-    name.textContent = currentUser.display_name || currentUser.username;
-    handle.textContent = '@' + (currentUser.username || '...');
+    name.textContent = currentUser.display_name || currentUser.email?.split('@')[0] || '...';
+    handle.textContent = currentUser.email || '...';
   } else {
     avatar.textContent = '?'; avatar.style.background = 'var(--bg-elevated)';
     name.textContent = '未登录'; handle.textContent = '点击登录';

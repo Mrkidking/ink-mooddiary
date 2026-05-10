@@ -6,7 +6,7 @@ const router = express.Router();
 
 // GET /api/users/:id
 router.get('/:id', optionalAuth, (req, res) => {
-  const user = getDB().prepare('SELECT id, username, display_name, bio, avatar_url, created_at FROM users WHERE id = ?').get(req.params.id);
+  const user = getDB().prepare('SELECT id, email, phone, display_name, bio, avatar_url, created_at FROM users WHERE id = ?').get(req.params.id);
   if (!user) return res.status(404).json({ error: '用户不存在' });
 
   const entryCount = getDB().prepare('SELECT COUNT(*) as c FROM entries WHERE user_id = ? AND is_public = 1').get(req.params.id).c;
@@ -25,14 +25,14 @@ router.get('/:id/entries', (req, res) => {
   const pageNum = Math.max(1, parseInt(req.query.page, 10) || 1);
   const limitNum = Math.min(50, Math.max(1, parseInt(req.query.limit, 10) || 20));
   const offset = (pageNum - 1) * limitNum;
-  const entries = getDB().prepare('SELECT e.*, u.username, u.display_name, u.avatar_url FROM entries e JOIN users u ON e.user_id = u.id WHERE e.user_id = ? AND e.is_public = 1 ORDER BY e.created_at DESC LIMIT ? OFFSET ?').all(req.params.id, limitNum, offset);
+  const entries = getDB().prepare('SELECT e.*, u.display_name, u.avatar_url FROM entries e JOIN users u ON e.user_id = u.id WHERE e.user_id = ? AND e.is_public = 1 ORDER BY e.created_at DESC LIMIT ? OFFSET ?').all(req.params.id, limitNum, offset);
   const total = getDB().prepare('SELECT COUNT(*) as c FROM entries WHERE user_id = ? AND is_public = 1').get(req.params.id).c;
 
   const enriched = entries.map(e => {
     const images = getDB().prepare('SELECT image_url FROM entry_images WHERE entry_id = ? ORDER BY sort_order').all(e.id).map(r => r.image_url);
     const likes_count = getDB().prepare('SELECT COUNT(*) as c FROM likes WHERE entry_id = ?').get(e.id).c;
     const comments_count = getDB().prepare('SELECT COUNT(*) as c FROM comments WHERE entry_id = ?').get(e.id).c;
-    return { ...e, images, likes_count, comments_count, user: { username: e.username, display_name: e.display_name, avatar_url: e.avatar_url } };
+    return { ...e, images, likes_count, comments_count, user: { display_name: e.display_name, avatar_url: e.avatar_url } };
   });
 
   res.json({ entries: enriched, total, page: pageNum });
@@ -56,13 +56,13 @@ router.post('/:id/follow', requireAuth, (req, res) => {
 
 // GET /api/users/:id/followers
 router.get('/:id/followers', (req, res) => {
-  const followers = getDB().prepare('SELECT u.id, u.username, u.display_name, u.avatar_url FROM follows f JOIN users u ON f.follower_id = u.id WHERE f.following_id = ?').all(req.params.id);
+  const followers = getDB().prepare('SELECT u.id, u.display_name, u.avatar_url FROM follows f JOIN users u ON f.follower_id = u.id WHERE f.following_id = ?').all(req.params.id);
   res.json({ followers });
 });
 
 // GET /api/users/:id/following
 router.get('/:id/following', (req, res) => {
-  const following = getDB().prepare('SELECT u.id, u.username, u.display_name, u.avatar_url FROM follows f JOIN users u ON f.following_id = u.id WHERE f.follower_id = ?').all(req.params.id);
+  const following = getDB().prepare('SELECT u.id, u.display_name, u.avatar_url FROM follows f JOIN users u ON f.following_id = u.id WHERE f.follower_id = ?').all(req.params.id);
   res.json({ following });
 });
 
