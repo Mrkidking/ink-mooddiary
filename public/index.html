@@ -66,11 +66,6 @@
                 <div class="checkbox-row"><input type="checkbox" id="lpRemember"><label for="lpRemember">记住我（30天免登录）</label></div>
                 <button class="btn-full" onclick="loginPage.submit()">登录</button>
                 <div class="forgot-link" onclick="loginPage.showForgot()">忘记密码？</div>
-                <div class="divider">或</div>
-                <div class="oauth-btns">
-                  <button class="oauth-btn" onclick="authUI.oauthLogin('github')">🐙 GitHub</button>
-                  <button class="oauth-btn" onclick="authUI.oauthLogin('google')">🔵 Google</button>
-                </div>
                 <div class="toggle-mode">没有账号？<a onclick="loginPage.switchTab('register')">立即注册</a></div>
               </div>
 
@@ -227,6 +222,11 @@
     <div class="login-error" id="loginError"></div>
     <button class="login-btn" id="loginBtn" onclick="authUI.submit()">登录</button>
   </div>
+</div>
+
+<!-- User List Modal -->
+<div class="modal-overlay" id="userListOverlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal"><div class="modal-title" id="userListTitle">关注者</div><div id="userListContent"></div></div>
 </div>
 
 <!-- Profile Edit Modal -->

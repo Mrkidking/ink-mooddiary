@@ -161,8 +161,12 @@ const profileView = {
     document.getElementById('profileHandle').textContent = '@' + (user.username || 'unknown');
     document.getElementById('profileBio').textContent = user.bio || '这个人很懒，什么都没有写...';
     document.getElementById('profileEntryCount').textContent = user.entryCount || 0;
-    document.getElementById('profileFollowerCount').textContent = user.followerCount || 0;
-    document.getElementById('profileFollowingCount').textContent = user.followingCount || 0;
+    const fwerEl = document.getElementById('profileFollowerCount');
+    fwerEl.textContent = user.followerCount || 0;
+    fwerEl.style.cursor = 'pointer'; fwerEl.onclick = () => profileView.showUserList(userId, 'followers');
+    const fwingEl = document.getElementById('profileFollowingCount');
+    fwingEl.textContent = user.followingCount || 0;
+    fwingEl.style.cursor = 'pointer'; fwingEl.onclick = () => profileView.showUserList(userId, 'following');
 
     document.getElementById('btnEditProfile').style.display = isSelf ? '' : 'none';
     const followBtn = document.getElementById('btnFollowProfile');
@@ -176,6 +180,15 @@ const profileView = {
     const eData = await API.get(`/api/users/${userId}/entries?limit=50`);
     const entries = eData.entries || [];
     document.getElementById('profilePosts').innerHTML = entries.length === 0 ? '<div style="text-align:center;padding:40px;color:var(--text-muted);">还没有公开日记</div>' : entries.map((e, i) => diaryCardHTML(e, i)).join('');
+  },
+
+  async showUserList(userId, type) {
+    const data = await API.get(`/api/users/${userId}/${type}`);
+    const users = data[type] || [];
+    const title = type === 'followers' ? '关注者' : '关注中';
+    document.getElementById('userListTitle').textContent = title;
+    document.getElementById('userListContent').innerHTML = users.length === 0 ? `<div style="text-align:center;padding:20px;color:var(--text-muted);">还没有${title}</div>` : users.map(u => `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer;" onclick="router.navigate('profile?user=${u.id}');document.getElementById('userListOverlay').classList.remove('open')"><div class="who-avatar" style="background:linear-gradient(135deg,#F0A89A,#E8927C);">${(u.display_name||u.username||'?').charAt(0)}</div><div style="flex:1;"><div style="font-weight:600;font-size:14px;">${esc(u.display_name||u.username)}</div><div style="font-size:12px;color:var(--text-muted);">@${esc(u.username||'')}</div></div></div>`).join('');
+    document.getElementById('userListOverlay').classList.add('open');
   }
 };
 
