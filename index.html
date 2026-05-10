@@ -1063,6 +1063,94 @@
     .profile-stats-row { gap: 20px; }
     .profile-stat-num { font-size: 22px; }
   }
+
+  /* ---- LOGIN OVERLAY ---- */
+  .login-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--bg-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+  }
+  .login-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .login-card {
+    width: 90%;
+    max-width: 380px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: 36px 28px;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+  }
+  .login-logo {
+    width: 56px; height: 56px;
+    border-radius: var(--radius);
+    background: var(--gradient-ins);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 28px;
+    color: #fff;
+    margin: 0 auto 16px;
+  }
+  .login-title { font-size: 20px; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 4px; }
+  .login-subtitle { font-size: 13px; color: var(--text-secondary); margin-bottom: 24px; }
+  .login-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 15px;
+    font-family: inherit;
+    color: var(--text-primary);
+    background: var(--bg-primary);
+    outline: none;
+    text-align: center;
+    letter-spacing: 4px;
+    transition: all var(--transition);
+    margin-bottom: 12px;
+  }
+  .login-input:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 3px rgba(232,146,124,0.12); }
+  .login-input::placeholder { letter-spacing: normal; color: var(--text-muted); }
+  .login-hint {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin: 4px 0 8px;
+    line-height: 1.4;
+  }
+  .login-error {
+    font-size: 12px;
+    color: #E8927C;
+    margin-top: 4px;
+    min-height: 18px;
+    transition: all var(--transition);
+  }
+  .login-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: var(--radius-full);
+    background: var(--gradient-ins-h);
+    color: #fff;
+    font-weight: 700;
+    font-size: 15px;
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition);
+    font-family: inherit;
+    margin-top: 8px;
+  }
+  .login-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(240,168,154,0.4); }
+  .login-btn:active { transform: scale(0.97); }
+  .login-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
 </style>
 </head>
 <body>
@@ -1070,6 +1158,19 @@
 <div class="warm-ambient amb-1"></div>
 <div class="warm-ambient amb-2"></div>
 <div class="warm-ambient amb-3"></div>
+
+<!-- Login Overlay -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-card">
+    <div class="login-logo">⌐</div>
+    <div class="login-title" id="loginTitle">INK 心情日记</div>
+    <div class="login-subtitle" id="loginSubtitle">输入密码解锁</div>
+    <input type="password" class="login-input" id="loginPassword" placeholder="输入密码" maxlength="32" autocomplete="off" onkeydown="if(event.key==='Enter')loginHandler.submit()">
+    <div class="login-hint" id="loginHint"></div>
+    <div class="login-error" id="loginError"></div>
+    <button class="login-btn" id="loginBtn" onclick="loginHandler.submit()">解锁</button>
+  </div>
+</div>
 
 <div class="app">
 
@@ -1257,6 +1358,8 @@
             <button class="btn-outline" onclick="app.exportData()">导出数据</button>
             <button class="btn-outline" onclick="document.getElementById('importInput').click()">导入数据</button>
             <input type="file" id="importInput" accept=".json" style="display:none" onchange="app.importData(this)">
+            <button class="btn-outline" onclick="app.openChangePassword()">🔒 修改密码</button>
+            <button class="btn-outline" onclick="app.lockApp()">🔐 锁定应用</button>
             <button class="btn-ghost danger" onclick="app.clearAllData()">清除所有数据</button>
           </div>
         </div>
@@ -1337,7 +1440,7 @@
 
 </div>
 
-<!-- Modal -->
+<!-- Profile Edit Modal -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <div class="modal-title">编辑个人资料</div>
@@ -1347,6 +1450,20 @@
     <div class="modal-actions">
       <button class="btn-outline" onclick="app.closeProfileEdit()">取消</button>
       <button class="btn-post" onclick="app.saveProfile()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- Change Password Modal -->
+<div class="modal-overlay" id="pwdModalOverlay">
+  <div class="modal">
+    <div class="modal-title">🔒 修改密码</div>
+    <input class="modal-input" type="password" id="oldPassword" placeholder="当前密码" maxlength="32" autocomplete="off">
+    <input class="modal-input" type="password" id="newPassword" placeholder="新密码（至少 4 位）" maxlength="32" minlength="4" autocomplete="off">
+    <div class="login-error" id="pwdError"></div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="app.closeChangePassword()">取消</button>
+      <button class="btn-post" onclick="app.confirmChangePassword()">确认修改</button>
     </div>
   </div>
 </div>
@@ -1382,6 +1499,116 @@
 </nav>
 
 <script>
+// ==================== LOGIN HANDLER ====================
+const loginHandler = (() => {
+  const PWD_KEY = 'mooddiary_pwd_hash';
+  const UNLOCK_KEY = 'mooddiary_unlocked';
+
+  let isSetup = false; // true = first time, user is setting a password
+
+  function isLocked() {
+    return !sessionStorage.getItem(UNLOCK_KEY);
+  }
+
+  // Set up first-time password
+  function beginSetup() {
+    isSetup = true;
+    document.getElementById('loginTitle').textContent = '设置密码';
+    document.getElementById('loginSubtitle').textContent = '首次使用，请设置一个密码来保护你的日记';
+    document.getElementById('loginBtn').textContent = '设置密码';
+    document.getElementById('loginPassword').placeholder = '设置密码（至少 4 位）';
+    document.getElementById('loginHint').textContent = '请牢记密码，遗忘后将无法恢复日记数据';
+    document.getElementById('loginError').textContent = '';
+    document.getElementById('loginPassword').value = '';
+    document.getElementById('loginPassword').focus();
+    document.getElementById('loginOverlay').classList.remove('hidden');
+    document.getElementById('loginPassword').setAttribute('minlength', '4');
+  }
+
+  // Show login screen
+  function showLogin(errorMsg) {
+    isSetup = false;
+    document.getElementById('loginTitle').textContent = 'INK 心情日记';
+    document.getElementById('loginSubtitle').textContent = '输入密码解锁';
+    document.getElementById('loginBtn').textContent = '解锁';
+    document.getElementById('loginPassword').placeholder = '输入密码';
+    document.getElementById('loginHint').textContent = '';
+    document.getElementById('loginError').textContent = errorMsg || '';
+    document.getElementById('loginPassword').value = '';
+    document.getElementById('loginOverlay').classList.remove('hidden');
+    document.getElementById('loginPassword').focus();
+  }
+
+  async function hashPassword(password) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password);
+    const hash = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  async function submit() {
+    const input = document.getElementById('loginPassword');
+    const password = input.value;
+    const btn = document.getElementById('loginBtn');
+    const errEl = document.getElementById('loginError');
+
+    if (!password || password.length < 4) {
+      errEl.textContent = '密码至少需要 4 位字符';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = '...';
+
+    const hash = await hashPassword(password);
+
+    if (isSetup) {
+      // First time: store hash
+      localStorage.setItem(PWD_KEY, hash);
+      sessionStorage.setItem(UNLOCK_KEY, '1');
+      document.getElementById('loginOverlay').classList.add('hidden');
+      btn.disabled = false;
+      if (typeof router !== 'undefined') router._onChange();
+    } else {
+      // Returning: verify hash
+      const storedHash = localStorage.getItem(PWD_KEY);
+      if (hash === storedHash) {
+        sessionStorage.setItem(UNLOCK_KEY, '1');
+        document.getElementById('loginOverlay').classList.add('hidden');
+        btn.disabled = false;
+        if (typeof router !== 'undefined') router._onChange();
+      } else {
+        errEl.textContent = '密码错误，请重试';
+        btn.disabled = false;
+        btn.textContent = '解锁';
+        input.value = '';
+        input.focus();
+      }
+    }
+  }
+
+  function checkOnLoad() {
+    const storedHash = localStorage.getItem(PWD_KEY);
+    if (!storedHash) {
+      // No password set yet
+      beginSetup();
+    } else if (isLocked()) {
+      // Has password but not unlocked in this session
+      showLogin('');
+    }
+    // If unlocked, do nothing — app renders normally
+  }
+
+  // Allow Enter key to submit
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('loginPassword').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') submit();
+    });
+  });
+
+  return { checkOnLoad, showLogin, beginSetup, _hashPassword: hashPassword };
+})();
+
 // ==================== MOODS ====================
 const MOODS = [
   { key: 'happy',    emoji: '😊', label: '开心' },
@@ -2018,6 +2245,9 @@ const miniCal = (() => {
 // ==================== APP ====================
 const app = {
   async init() {
+    // Check lock state first — show login if needed
+    loginHandler.checkOnLoad();
+
     await DB.open();
 
     const user = UserStore.get();
@@ -2039,6 +2269,50 @@ const app = {
     });
 
     router._onChange();
+  },
+
+  // Lock the app (for logout / session end)
+  lockApp() {
+    sessionStorage.removeItem('mooddiary_unlocked');
+    loginHandler.showLogin('');
+  },
+
+  async changePassword(oldPwd, newPwd) {
+    const oldHash = await loginHandler._hashPassword(oldPwd);
+    const storedHash = localStorage.getItem('mooddiary_pwd_hash');
+    if (oldHash !== storedHash) return false;
+    const newHash = await loginHandler._hashPassword(newPwd);
+    localStorage.setItem('mooddiary_pwd_hash', newHash);
+    return true;
+  },
+
+  openChangePassword() {
+    document.getElementById('oldPassword').value = '';
+    document.getElementById('newPassword').value = '';
+    document.getElementById('pwdError').textContent = '';
+    document.getElementById('pwdModalOverlay').classList.add('open');
+  },
+
+  closeChangePassword() {
+    document.getElementById('pwdModalOverlay').classList.remove('open');
+  },
+
+  async confirmChangePassword() {
+    const oldPwd = document.getElementById('oldPassword').value;
+    const newPwd = document.getElementById('newPassword').value;
+    const errEl = document.getElementById('pwdError');
+
+    if (!oldPwd || !newPwd) { errEl.textContent = '请填写完整'; return; }
+    if (newPwd.length < 4) { errEl.textContent = '新密码至少需要 4 位字符'; return; }
+    if (oldPwd === newPwd) { errEl.textContent = '新密码不能与当前密码相同'; return; }
+
+    const success = await this.changePassword(oldPwd, newPwd);
+    if (success) {
+      this.closeChangePassword();
+      this.toast('密码已修改');
+    } else {
+      errEl.textContent = '当前密码错误';
+    }
   },
 
   escHtml(str) {
@@ -2316,6 +2590,15 @@ const app = {
 // Modal click to close
 document.getElementById('modalOverlay').addEventListener('click', function(e) {
   if (e.target === this) app.closeProfileEdit();
+});
+
+document.getElementById('pwdModalOverlay').addEventListener('click', function(e) {
+  if (e.target === this) app.closeChangePassword();
+});
+
+// Enter key for password change modal
+document.getElementById('newPassword').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') app.confirmChangePassword();
 });
 
 // Init
