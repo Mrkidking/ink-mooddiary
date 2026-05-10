@@ -148,7 +148,15 @@ const profileView = {
     if (!user) return;
 
     const isSelf = currentUser && parseInt(currentUser.id) === parseInt(userId);
-    document.getElementById('profileAvatar').textContent = (user.display_name || user.username).charAt(0).toUpperCase();
+    const avatarEl = document.getElementById('profileAvatar');
+    const avatarUrl = user.avatar_url || '';
+    if (avatarUrl) {
+      avatarEl.innerHTML = `<img src="${avatarUrl}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+      avatarEl.style.background = 'none';
+    } else {
+      avatarEl.textContent = (user.display_name || user.username).charAt(0).toUpperCase();
+      avatarEl.style.background = 'var(--gradient-ins)';
+    }
     document.getElementById('profileName').textContent = user.display_name || user.username;
     document.getElementById('profileHandle').textContent = '@' + (user.username || 'unknown');
     document.getElementById('profileBio').textContent = user.bio || '这个人很懒，什么都没有写...';

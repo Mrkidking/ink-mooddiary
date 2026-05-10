@@ -255,9 +255,12 @@ const app = {
 
   openProfileEdit() {
     document.getElementById('editName').value = currentUser.display_name || '';
-    document.getElementById('editHandle').value = '';
     document.getElementById('editBio').value = currentUser.bio || '';
-    document.getElementById('avatarPreview').src = currentUser.avatar_url || '';
+    const avatarUrl = currentUser.avatar_url || '';
+    const preview = document.getElementById('avatarPreview');
+    if (avatarUrl) preview.src = avatarUrl + '?t=' + Date.now();
+    else preview.src = '';
+    preview.style.display = avatarUrl ? '' : 'none';
     document.getElementById('modalOverlay').classList.add('open');
   },
   closeProfileEdit() { document.getElementById('modalOverlay').classList.remove('open'); },

@@ -61,8 +61,8 @@
 
               <!-- Login form -->
               <div id="loginFormBlock">
-                <div class="field"><label>用户名</label><input type="text" id="lpUsername" placeholder="输入用户名" autocomplete="username"></div>
-                <div class="field"><label>密码</label><input type="password" id="lpPassword" placeholder="输入密码" autocomplete="current-password" onkeydown="if(event.key==='Enter')loginPage.submit()"></div>
+                <div class="field"><label>用户名</label><input type="text" id="lpUsername" placeholder="输入用户名" autocomplete="username"><div class="field-error" id="lpUserErr"></div></div>
+                <div class="field"><label>密码</label><div style="position:relative;"><input type="password" id="lpPassword" placeholder="输入密码" autocomplete="current-password" onkeydown="if(event.key==='Enter')loginPage.submit()"><button type="button" class="pwd-toggle" onclick="loginPage.togglePwd('lpPassword',this)">👁️</button></div><div class="field-error" id="lpPwdErr"></div></div>
                 <div class="checkbox-row"><input type="checkbox" id="lpRemember"><label for="lpRemember">记住我（30天免登录）</label></div>
                 <button class="btn-full" onclick="loginPage.submit()">登录</button>
                 <div class="forgot-link" onclick="loginPage.showForgot()">忘记密码？</div>
@@ -76,10 +76,10 @@
 
               <!-- Register form -->
               <div id="registerFormBlock" style="display:none;">
-                <div class="field"><label>用户名</label><input type="text" id="rpUsername" placeholder="给自己起个名字" autocomplete="off"></div>
-                <div class="field"><label>密码</label><input type="password" id="rpPassword" placeholder="至少4位" autocomplete="new-password"></div>
+                <div class="field"><label>用户名</label><input type="text" id="rpUsername" placeholder="给自己起个名字" autocomplete="off"><div class="field-error" id="rpUserErr"></div></div>
+                <div class="field"><label>密码</label><div style="position:relative;"><input type="password" id="rpPassword" placeholder="至少4位" autocomplete="new-password"><button type="button" class="pwd-toggle" onclick="loginPage.togglePwd('rpPassword',this)">👁️</button></div><div class="field-error" id="rpPwdErr"></div></div>
                 <div class="field"><label>密保问题（找回密码用）</label><input type="text" id="rpQuestion" placeholder="例如：我的第一只宠物叫什么？"></div>
-                <div class="field"><label>密保答案</label><input type="text" id="rpAnswer" placeholder="密保问题的答案" autocomplete="off"></div>
+                <div class="field"><label>密保答案</label><input type="text" id="rpAnswer" placeholder="密保问题的答案" autocomplete="off"><div class="field-error" id="rpAnsErr"></div></div>
                 <div class="checkbox-row"><input type="checkbox" id="rpRemember"><label for="rpRemember">记住我</label></div>
                 <button class="btn-full" onclick="loginPage.submit()">注册</button>
                 <div class="toggle-mode">已有账号？<a onclick="loginPage.switchTab('login')">立即登录</a></div>

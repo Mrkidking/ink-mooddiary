@@ -282,6 +282,9 @@ body { font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-seri
 .login-form-card .toggle-mode { text-align:center; margin-top:16px; font-size:13px; color:var(--text-secondary); }
 .login-form-card .toggle-mode a { color:var(--accent-blue); font-weight:600; cursor:pointer; text-decoration:none; }
 .login-form-card .toggle-mode a:hover { text-decoration:underline; }
+.login-form-card .field-error { font-size:11px; color:#E8927C; min-height:16px; margin-top:2px; }
+.login-form-card .pwd-toggle { position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; font-size:16px; padding:4px; opacity:0.6; }
+.login-form-card .pwd-toggle:hover { opacity:1; }
 
 /* Forgot password flow */
 .forgot-steps { display:none; }

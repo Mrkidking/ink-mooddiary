@@ -93,9 +93,18 @@ const loginPage = (() => {
   let forgotUserId = null;
   let forgotQuestion = '';
 
+  function clearErrors() {
+    document.querySelectorAll('.field-error').forEach(e => e.textContent = '');
+  }
+
+  function togglePwd(inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (input.type === 'password') { input.type = 'text'; btn.textContent = '🙈'; }
+    else { input.type = 'password'; btn.textContent = '👁️'; }
+  }
+
   function switchTab(tab) {
-    mode = tab;
-    document.querySelectorAll('#view-login .tab').forEach(t => t.classList.toggle('active', t.dataset.tab ? false : tab === 'login'));
+    mode = tab; clearErrors();
     document.querySelectorAll('#view-login .tab').forEach(t => t.classList.toggle('active', (t.textContent.includes('登录') && tab === 'login') || (t.textContent.includes('注册') && tab === 'register')));
     document.getElementById('loginFormBlock').style.display = tab === 'login' ? '' : 'none';
     document.getElementById('registerFormBlock').style.display = tab === 'register' ? '' : 'none';
@@ -108,6 +117,7 @@ const loginPage = (() => {
   async function submit() {
     const btn = document.querySelector('#view-login .btn-full');
     const origText = btn.textContent;
+    clearErrors();
     btn.disabled = true; btn.textContent = '请稍候...';
 
     try {
@@ -115,19 +125,21 @@ const loginPage = (() => {
         const username = document.getElementById('lpUsername').value.trim();
         const password = document.getElementById('lpPassword').value;
         const remember = document.getElementById('lpRemember').checked;
-        if (!username || !password) { toast('请填写完整'); return; }
+        if (!username) { document.getElementById('lpUserErr').textContent = '请输入用户名'; btn.disabled = false; btn.textContent = origText; return; }
+        if (!password) { document.getElementById('lpPwdErr').textContent = '请输入密码'; btn.disabled = false; btn.textContent = origText; return; }
         const r = await Auth.login(username, password, remember);
-        if (r.error) { toast(r.error); return; }
+        if (r.error) { document.getElementById('lpPwdErr').textContent = r.error; btn.disabled = false; btn.textContent = origText; return; }
       } else {
         const username = document.getElementById('rpUsername').value.trim();
         const password = document.getElementById('rpPassword').value;
         const question = document.getElementById('rpQuestion').value.trim();
         const answer = document.getElementById('rpAnswer').value.trim();
         const remember = document.getElementById('rpRemember').checked;
-        if (!username || !password) { toast('请填写用户名和密码'); return; }
-        if (password.length < 4) { toast('密码至少4位'); return; }
+        if (!username) { document.getElementById('rpUserErr').textContent = '请输入用户名'; btn.disabled = false; btn.textContent = origText; return; }
+        if (!password || password.length < 4) { document.getElementById('rpPwdErr').textContent = '密码至少4位'; btn.disabled = false; btn.textContent = origText; return; }
+        if (!question || !answer) { document.getElementById('rpAnsErr').textContent = '请设置密保问题和答案（用于找回密码）'; btn.disabled = false; btn.textContent = origText; return; }
         const r = await Auth.register(username, password, question, answer, remember);
-        if (r.error) { toast(r.error); return; }
+        if (r.error) { document.getElementById('rpUserErr').textContent = r.error; btn.disabled = false; btn.textContent = origText; return; }
       }
       router.navigate('home');
     } finally {
