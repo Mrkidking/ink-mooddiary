@@ -21,7 +21,9 @@ const router = {
     // Auth-gated routes
     if (route === 'write' && !currentUser) { authUI.show(); router.navigate('home'); return; }
 
-    if (route === 'login') { loginPage.handleCallback(); }
+    // Toggle login page overlay
+    document.getElementById('view-login').style.display = route === 'login' ? 'flex' : 'none';
+    if (route === 'login') { loginPage.handleCallback(); return; }
     if (route === 'home') { await homeView.render(); updateWeather(); updateRightPanel(); }
     if (route === 'explore') exploreView.render();
     if (route === 'write') writeView.render();

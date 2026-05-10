@@ -29,7 +29,7 @@
       <a class="nav-item" href="#profile" data-route="profile"><span>👤</span> 我的</a>
     </nav>
     <div class="sidebar-footer">
-      <div class="user-card-side" id="sidebarUserCard" onclick="if(currentUser)router.navigate('profile');else authUI.show()">
+      <div class="user-card-side" id="sidebarUserCard" onclick="if(currentUser)router.navigate('profile');else router.navigate('login')">
         <div class="user-avatar-side" id="sidebarAvatar">?</div>
         <div class="user-info-side">
           <div class="user-name-side" id="sidebarName">未登录</div>
@@ -98,8 +98,8 @@
 
       <!-- HOME VIEW -->
       <div class="view active" id="view-home">
-        <div class="topbar"><span class="topbar-title">为你推荐</span><button class="btn-outline" onclick="if(currentUser)router.navigate('write');else authUI.show()">✏️ 写日记</button></div>
-        <div class="guest-banner" id="guestBanner" style="display:none;"><span>登录以记录心情、参与互动</span><button onclick="authUI.show()">登录 / 注册</button></div>
+        <div class="topbar"><span class="topbar-title">为你推荐</span><button class="btn-outline" onclick="if(currentUser)router.navigate('write');else router.navigate('login')">✏️ 写日记</button></div>
+        <div class="guest-banner" id="guestBanner" style="display:none;"><span>登录以记录心情、参与互动</span><button onclick="router.navigate('login')">登录 / 注册</button></div>
         <div class="compose" id="homeCompose" style="display:none;">
           <div class="compose-avatar" id="composeAvatar">?</div>
           <div class="compose-body">

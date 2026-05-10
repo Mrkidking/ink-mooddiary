@@ -106,25 +106,33 @@ const loginPage = (() => {
   }
 
   async function submit() {
-    if (mode === 'login') {
-      const username = document.getElementById('lpUsername').value.trim();
-      const password = document.getElementById('lpPassword').value;
-      const remember = document.getElementById('lpRemember').checked;
-      if (!username || !password) { toast('请填写完整'); return; }
-      const r = await Auth.login(username, password, remember);
-      if (r.error) { toast(r.error); return; }
-    } else {
-      const username = document.getElementById('rpUsername').value.trim();
-      const password = document.getElementById('rpPassword').value;
-      const question = document.getElementById('rpQuestion').value.trim();
-      const answer = document.getElementById('rpAnswer').value.trim();
-      const remember = document.getElementById('rpRemember').checked;
-      if (!username || !password) { toast('请填写用户名和密码'); return; }
-      if (password.length < 4) { toast('密码至少4位'); return; }
-      const r = await Auth.register(username, password, question, answer, remember);
-      if (r.error) { toast(r.error); return; }
+    const btn = document.querySelector('#view-login .btn-full');
+    const origText = btn.textContent;
+    btn.disabled = true; btn.textContent = '请稍候...';
+
+    try {
+      if (mode === 'login') {
+        const username = document.getElementById('lpUsername').value.trim();
+        const password = document.getElementById('lpPassword').value;
+        const remember = document.getElementById('lpRemember').checked;
+        if (!username || !password) { toast('请填写完整'); return; }
+        const r = await Auth.login(username, password, remember);
+        if (r.error) { toast(r.error); return; }
+      } else {
+        const username = document.getElementById('rpUsername').value.trim();
+        const password = document.getElementById('rpPassword').value;
+        const question = document.getElementById('rpQuestion').value.trim();
+        const answer = document.getElementById('rpAnswer').value.trim();
+        const remember = document.getElementById('rpRemember').checked;
+        if (!username || !password) { toast('请填写用户名和密码'); return; }
+        if (password.length < 4) { toast('密码至少4位'); return; }
+        const r = await Auth.register(username, password, question, answer, remember);
+        if (r.error) { toast(r.error); return; }
+      }
+      router.navigate('home');
+    } finally {
+      btn.disabled = false; btn.textContent = origText;
     }
-    router.navigate('home');
   }
 
   async function showForgot() {
