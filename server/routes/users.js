@@ -1,5 +1,5 @@
 const express = require('express');
-const { db } = require('../db');
+const { getDB } = require('../db');
 const { requireAuth, optionalAuth } = require('../middleware/auth');
 
 const router = express.Router();
@@ -22,9 +22,10 @@ router.get('/:id', optionalAuth, (req, res) => {
 
 // GET /api/users/:id/entries
 router.get('/:id/entries', (req, res) => {
-  const { page = 1, limit = 20 } = req.query;
-  const offset = (parseInt(page) - 1) * parseInt(limit);
-  const entries = getDB().prepare('SELECT e.*, u.username, u.display_name, u.avatar_url FROM entries e JOIN users u ON e.user_id = u.id WHERE e.user_id = ? AND e.is_public = 1 ORDER BY e.created_at DESC LIMIT ? OFFSET ?').all(req.params.id, parseInt(limit), offset);
+  const pageNum = Math.max(1, parseInt(req.query.page, 10) || 1);
+  const limitNum = Math.min(50, Math.max(1, parseInt(req.query.limit, 10) || 20));
+  const offset = (pageNum - 1) * limitNum;
+  const entries = getDB().prepare('SELECT e.*, u.username, u.display_name, u.avatar_url FROM entries e JOIN users u ON e.user_id = u.id WHERE e.user_id = ? AND e.is_public = 1 ORDER BY e.created_at DESC LIMIT ? OFFSET ?').all(req.params.id, limitNum, offset);
   const total = getDB().prepare('SELECT COUNT(*) as c FROM entries WHERE user_id = ? AND is_public = 1').get(req.params.id).c;
 
   const enriched = entries.map(e => {
@@ -34,7 +35,7 @@ router.get('/:id/entries', (req, res) => {
     return { ...e, images, likes_count, comments_count, user: { username: e.username, display_name: e.display_name, avatar_url: e.avatar_url } };
   });
 
-  res.json({ entries: enriched, total, page: parseInt(page) });
+  res.json({ entries: enriched, total, page: pageNum });
 });
 
 // POST /api/users/:id/follow — toggle follow

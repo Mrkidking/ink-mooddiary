@@ -24,7 +24,7 @@ router.get('/', optionalAuth, (req, res) => {
 
     if (mood) { where += ' AND e.mood_key = ?'; params.push(mood); }
     if (date) { where += ' AND e.date = ?'; params.push(date); }
-    if (user_id) { where += ' AND e.user_id = ?'; params.push(parseInt(user_id)); }
+    if (user_id) { const uid = safeInt(user_id); if (uid > 0) { where += ' AND e.user_id = ?'; params.push(uid); } }
 
     const countRow = getDB().prepare(`SELECT COUNT(*) as total FROM entries e ${where}`).get(...params);
     const total = countRow ? (countRow.total || 0) : 0;
@@ -46,9 +46,16 @@ router.get('/', optionalAuth, (req, res) => {
   }
 });
 
+// Helper: safely parse int, returns 0 for invalid input
+function safeInt(v) { const n = parseInt(v, 10); return (isNaN(n) || n <= 0) ? 0 : n; }
+// Helper: robust is_public check
+function isPublic(val) { return ![false, 'false', 0, '0'].includes(val); }
+
 // GET /api/entries/:id
 router.get('/:id', optionalAuth, (req, res) => {
-  const e = getDB().prepare('SELECT e.*, u.username, u.display_name, u.avatar_url FROM entries e JOIN users u ON e.user_id = u.id WHERE e.id = ?').get(parseInt(req.params.id));
+  const id = safeInt(req.params.id);
+  if (!id) return res.status(400).json({ error: '无效的日记ID' });
+  const e = getDB().prepare('SELECT e.*, u.username, u.display_name, u.avatar_url FROM entries e JOIN users u ON e.user_id = u.id WHERE e.id = ?').get(id);
   if (!e) return res.status(404).json({ error: '日记不存在' });
 
   const images = (getDB().prepare('SELECT image_url FROM entry_images WHERE entry_id = ? ORDER BY sort_order').all(e.id) || []).map(r => r.image_url);
@@ -66,7 +73,7 @@ router.post('/', requireAuth, upload.array('images', 4), (req, res) => {
   if (!mood_key) return res.status(400).json({ error: '请选择心情' });
 
   const dateStr = entryDate || new Date().toISOString().split('T')[0];
-  const result = getDB().prepare("INSERT INTO entries (user_id, mood_key, title, content, is_public, date, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))").run(req.userId, mood_key, title || '', content || '', is_public === 'false' ? 0 : 1, dateStr);
+  const result = getDB().prepare("INSERT INTO entries (user_id, mood_key, title, content, is_public, date, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))").run(req.userId, mood_key, title || '', content || '', isPublic(is_public) ? 1 : 0, dateStr);
 
   if (req.files && req.files.length > 0) {
     const ins = getDB().prepare('INSERT INTO entry_images (entry_id, image_url, sort_order) VALUES (?, ?, ?)');
@@ -78,7 +85,9 @@ router.post('/', requireAuth, upload.array('images', 4), (req, res) => {
 
 // PUT /api/entries/:id
 router.put('/:id', requireAuth, upload.array('images', 4), (req, res) => {
-  const entry = getDB().prepare('SELECT * FROM entries WHERE id = ?').get(parseInt(req.params.id));
+  const id = safeInt(req.params.id);
+  if (!id) return res.status(400).json({ error: '无效的日记ID' });
+  const entry = getDB().prepare('SELECT * FROM entries WHERE id = ?').get(id);
   if (!entry) return res.status(404).json({ error: '日记不存在' });
   if (entry.user_id !== req.userId) return res.status(403).json({ error: '无权编辑' });
 
@@ -86,15 +95,15 @@ router.put('/:id', requireAuth, upload.array('images', 4), (req, res) => {
   getDB().prepare("UPDATE entries SET mood_key = ?, title = ?, content = ?, is_public = ?, date = ?, updated_at = datetime('now') WHERE id = ?").run(
     mood_key || entry.mood_key, title !== undefined ? title : entry.title,
     content !== undefined ? content : entry.content,
-    is_public !== undefined ? (is_public === 'false' ? 0 : 1) : entry.is_public,
-    eDate || entry.date, parseInt(req.params.id)
+    is_public !== undefined ? (isPublic(is_public) ? 1 : 0) : entry.is_public,
+    eDate || entry.date, id
   );
 
   if (keep_images !== 'true') {
-    getDB().prepare('DELETE FROM entry_images WHERE entry_id = ?').run(parseInt(req.params.id));
+    getDB().prepare('DELETE FROM entry_images WHERE entry_id = ?').run(id);
     if (req.files && req.files.length > 0) {
       const ins = getDB().prepare('INSERT INTO entry_images (entry_id, image_url, sort_order) VALUES (?, ?, ?)');
-      req.files.forEach((f, i) => ins.run(parseInt(req.params.id), '/uploads/' + f.filename, i));
+      req.files.forEach((f, i) => ins.run(id, '/uploads/' + f.filename, i));
     }
   }
 
@@ -103,11 +112,13 @@ router.put('/:id', requireAuth, upload.array('images', 4), (req, res) => {
 
 // DELETE /api/entries/:id
 router.delete('/:id', requireAuth, (req, res) => {
-  const entry = getDB().prepare('SELECT * FROM entries WHERE id = ?').get(parseInt(req.params.id));
+  const id = safeInt(req.params.id);
+  if (!id) return res.status(400).json({ error: '无效的日记ID' });
+  const entry = getDB().prepare('SELECT * FROM entries WHERE id = ?').get(id);
   if (!entry) return res.status(404).json({ error: '日记不存在' });
   if (entry.user_id !== req.userId) return res.status(403).json({ error: '无权删除' });
 
-  getDB().prepare('DELETE FROM entries WHERE id = ?').run(parseInt(req.params.id));
+  getDB().prepare('DELETE FROM entries WHERE id = ?').run(id);
   res.json({ success: true });
 });
 
