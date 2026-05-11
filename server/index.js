@@ -25,13 +25,13 @@ app.use('/api/users', require('./routes/users'));
 app.use('/api/weather', require('./routes/weather'));
 
 // Community stats
-app.get('/api/stats/community', (req, res) => {
+app.get('/api/stats/community', async (req, res) => {
   const { getDB } = require('./db');
   const db = getDB();
-  const totalEntries = db.prepare('SELECT COUNT(*) as c FROM entries WHERE is_public = 1').get().c;
-  const totalUsers = db.prepare('SELECT COUNT(*) as c FROM users').get().c;
+  const totalEntries = (await db.prepare('SELECT COUNT(*) as c FROM entries WHERE is_public = 1').get()).c || 0;
+  const totalUsers = (await db.prepare('SELECT COUNT(*) as c FROM users').get()).c || 0;
   const today = new Date().toISOString().split('T')[0];
-  const todayMoods = db.prepare("SELECT mood_key, COUNT(*) as c FROM entries WHERE is_public = 1 AND date = ? GROUP BY mood_key ORDER BY c DESC LIMIT 1").all(today);
+  const todayMoods = await db.prepare("SELECT mood_key, COUNT(*) as c FROM entries WHERE is_public = 1 AND date = ? GROUP BY mood_key ORDER BY c DESC LIMIT 1").all(today);
   res.json({ totalEntries: totalEntries || 0, totalUsers: totalUsers || 0, todayTopMood: todayMoods[0] || null });
 });
 

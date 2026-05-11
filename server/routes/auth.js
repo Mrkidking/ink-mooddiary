@@ -25,11 +25,11 @@ router.post('/register', (req, res) => {
     if (password.length < 4) return res.status(400).json({ error: '密码至少4位' });
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ error: '邮箱格式不正确' });
 
-    const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
+    const existing = await db.prepare('SELECT id FROM users WHERE email = ?').get(email);
     if (existing) return res.status(409).json({ error: '该邮箱已注册' });
 
     const hash = bcrypt.hashSync(password, 10);
-    const result = db.prepare('INSERT INTO users (email, phone, password, display_name) VALUES (?, ?, ?, ?)').run(
+    const result = await db.prepare('INSERT INTO users (email, phone, password, display_name) VALUES (?, ?, ?, ?)').run(
       email, phone || '', hash, display_name || email.split('@')[0]
     );
 
@@ -49,7 +49,7 @@ router.post('/login', (req, res) => {
     const { email, password, remember_me } = req.body;
     if (!email || !password) return res.status(400).json({ error: '邮箱和密码不能为空' });
 
-    const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
+    const user = await db.prepare('SELECT * FROM users WHERE email = ?').get(email);
     if (!user) return res.status(401).json({ error: '邮箱或密码错误' });
     if (!bcrypt.compareSync(password, user.password)) return res.status(401).json({ error: '邮箱或密码错误' });
 
@@ -65,7 +65,7 @@ router.post('/login', (req, res) => {
 // GET /api/auth/me
 router.get('/me', requireAuth, (req, res) => {
   const db = getDB();
-  const user = db.prepare('SELECT id, email, phone, display_name, bio, avatar_url, created_at FROM users WHERE id = ?').get(req.userId);
+  const user = await db.prepare('SELECT id, email, phone, display_name, bio, avatar_url, created_at FROM users WHERE id = ?').get(req.userId);
   if (!user) return res.status(404).json({ error: '用户不存在' });
   res.json({ user });
 });
@@ -74,8 +74,8 @@ router.get('/me', requireAuth, (req, res) => {
 router.put('/me', requireAuth, (req, res) => {
   const db = getDB();
   const { display_name, phone, bio } = req.body;
-  db.prepare('UPDATE users SET display_name = ?, phone = ?, bio = ? WHERE id = ?').run(display_name || '', phone || '', bio || '', req.userId);
-  const user = db.prepare('SELECT id, email, phone, display_name, bio, avatar_url, created_at FROM users WHERE id = ?').get(req.userId);
+  await db.prepare('UPDATE users SET display_name = ?, phone = ?, bio = ? WHERE id = ?').run(display_name || '', phone || '', bio || '', req.userId);
+  const user = await db.prepare('SELECT id, email, phone, display_name, bio, avatar_url, created_at FROM users WHERE id = ?').get(req.userId);
   res.json({ user });
 });
 
@@ -84,7 +84,7 @@ router.post('/avatar', requireAuth, avatarUpload.single('avatar'), (req, res) =>
   const db = getDB();
   if (!req.file) return res.status(400).json({ error: '请选择图片' });
   const url = '/uploads/avatars/' + req.file.filename;
-  db.prepare('UPDATE users SET avatar_url = ? WHERE id = ?').run(url, req.userId);
+  await db.prepare('UPDATE users SET avatar_url = ? WHERE id = ?').run(url, req.userId);
   res.json({ avatar_url: url });
 });
 
